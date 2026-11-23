@@ -1,0 +1,1834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KalaSetu (कला सेतु) | Fair-Trade Clay & Ceramic Artisan Guild</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Embedded Artisan Data for Standalone Instant Execution -->
+  <script src="data/data.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            terracotta: {
+              50: '#FDF6F3',
+              100: '#FAECE6',
+              200: '#F4D4C8',
+              500: '#C85A32',
+              600: '#B24B25',
+              700: '#943B1B',
+              800: '#752D14'
+            },
+            clay: {
+              800: '#2A1F1D',
+              900: '#1C1514'
+            },
+            cobalt: {
+              600: '#1E4E8C',
+              700: '#163B6B'
+            },
+            ochre: {
+              400: '#E0A96D',
+              500: '#CCA43B',
+              600: '#B08B2A'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .font-heritage {
+      font-family: 'Cinzel', serif;
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+    }
+    .craft-pattern {
+      background-color: #faf7f5;
+      background-image: radial-gradient(#e4d6cd 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    /* Hide scrollbar */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="craft-pattern text-slate-800 min-h-screen flex flex-col">
+
+  <!-- TOP ANNOUNCEMENT BAR: SAFE TRANSIT & GI PROVENANCE -->
+  <div class="bg-gradient-to-r from-clay-900 via-terracotta-800 to-clay-900 text-white text-xs py-2 px-4 border-b border-terracotta-700/50">
+    <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
+      <div class="flex items-center gap-2">
+        <span class="bg-amber-400 text-slate-900 font-bold px-2 py-0.5 rounded text-[10px] uppercase tracking-wider">Zero-Breakage</span>
+        <span>Eco-Bio Straw Packaging reduces transit breakage from 27.5% to &lt;3% &bull; 100% Free Replacement Guarantee</span>
+      </div>
+      <div class="flex items-center gap-4 text-stone-300">
+        <span class="hidden md:inline flex items-center gap-1"><i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-400 inline"></i> 78% Direct Artisan Realization</span>
+        <span class="hidden sm:inline">&bull;</span>
+        <span class="flex items-center gap-1"><i data-lucide="award" class="w-3.5 h-3.5 text-amber-300 inline"></i> GI-Certified Crafts</span>
+        <button onclick="toggleCurrency()" id="currencyBtn" class="bg-stone-800 hover:bg-stone-700 px-2.5 py-0.5 rounded text-amber-300 font-medium border border-stone-600 transition">
+          INR (₹)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN NAVIGATION -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-stone-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-4">
+      
+      <!-- Brand Logo -->
+      <div class="flex items-center gap-3 cursor-pointer" onclick="switchView('marketplace')">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-terracotta-600 to-amber-600 flex items-center justify-center text-white shadow-md shadow-terracotta-500/20">
+          <i data-lucide="sparkles" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-heritage text-2xl font-bold tracking-tight text-clay-900">KalaSetu</span>
+            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200">कला सेतु</span>
+          </div>
+          <p class="text-[11px] text-stone-500 font-medium tracking-wide">Direct Guild for Indian Clay & Ceramic Masters</p>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="hidden lg:flex items-center gap-1 text-sm font-medium">
+        <button onclick="switchView('marketplace')" id="nav-marketplace" class="px-3 py-1.5 rounded-lg text-terracotta-600 bg-terracotta-50 font-semibold transition">
+          Artisan Catalog
+        </button>
+        <button onclick="switchView('artisans')" id="nav-artisans" class="px-3 py-1.5 rounded-lg text-stone-600 hover:text-stone-900 hover:bg-stone-100 transition">
+          Meet The 7 Masters
+        </button>
+        <button onclick="switchView('calculator')" id="nav-calculator" class="px-3 py-1.5 rounded-lg text-stone-600 hover:text-stone-900 hover:bg-stone-100 transition flex items-center gap-1.5">
+          <i data-lucide="scale" class="w-4 h-4 text-amber-600"></i> Fair-Share Economics
+        </button>
+        <button onclick="switchView('commissions')" id="nav-commissions" class="px-3 py-1.5 rounded-lg text-stone-600 hover:text-stone-900 hover:bg-stone-100 transition flex items-center gap-1.5">
+          <i data-lucide="hammer" class="w-4 h-4 text-purple-600"></i> Custom Commissions
+        </button>
+        <button onclick="switchView('b2b')" id="nav-b2b" class="px-3 py-1.5 rounded-lg text-stone-600 hover:text-stone-900 hover:bg-stone-100 transition">
+          B2B Wholesale
+        </button>
+        <button onclick="switchView('ondc-voice')" id="nav-ondc-voice" class="px-3 py-1.5 rounded-lg text-emerald-700 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 transition flex items-center gap-1.5">
+          <i data-lucide="mic" class="w-4 h-4 text-emerald-600"></i> ONDC Voice Studio
+        </button>
+      </nav>
+
+      <!-- Search & Cart Action Buttons -->
+      <div class="flex items-center gap-3">
+        <!-- Quick Search -->
+        <div class="relative hidden sm:block w-48 xl:w-64">
+          <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400"></i>
+          <input 
+            type="text" 
+            id="searchInput" 
+            oninput="handleSearch(this.value)"
+            placeholder="Search terracotta, Lippan, GI..." 
+            class="w-full text-xs pl-9 pr-3 py-2 rounded-xl bg-stone-100 border border-stone-200 focus:outline-none focus:ring-2 focus:ring-terracotta-500 focus:bg-white transition"
+          />
+        </div>
+
+        <!-- Cart Button -->
+        <button onclick="toggleCartDrawer()" class="relative p-2.5 rounded-xl bg-terracotta-500 hover:bg-terracotta-600 text-white shadow-md shadow-terracotta-500/30 transition flex items-center gap-2">
+          <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+          <span class="text-xs font-bold hidden sm:inline" id="cartTotalHeader">₹0</span>
+          <span id="cartCountBadge" class="absolute -top-1.5 -right-1.5 bg-amber-400 text-slate-900 text-[11px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-white shadow">
+            0
+          </span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- IMPACT TICKER STRIP -->
+  <section class="bg-stone-900 text-stone-200 py-3 border-b border-stone-800">
+    <div class="max-w-7xl mx-auto px-4 flex flex-wrap justify-between items-center text-xs gap-4">
+      <div class="flex items-center gap-6 overflow-x-auto no-scrollbar py-1">
+        <div class="flex items-center gap-2 whitespace-nowrap">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="text-stone-400">Terracotta Breakage Solved:</span>
+          <strong class="text-white font-mono">27.5% → 2.8%</strong>
+        </div>
+        <div class="flex items-center gap-2 whitespace-nowrap">
+          <i data-lucide="trending-up" class="w-3.5 h-3.5 text-amber-400"></i>
+          <span class="text-stone-400">Avg Artisan Hourly Realization:</span>
+          <strong class="text-white font-mono">₹13.10 → ₹58.40 / hr (+345%)</strong>
+        </div>
+        <div class="flex items-center gap-2 whitespace-nowrap">
+          <i data-lucide="shield" class="w-3.5 h-3.5 text-blue-400"></i>
+          <span class="text-stone-400">Priya's Outsourced Framing:</span>
+          <strong class="text-emerald-300 font-mono">₹333/piece saved in-house</strong>
+        </div>
+      </div>
+      <button onclick="switchView('fund')" class="text-amber-400 hover:text-amber-300 font-medium underline underline-offset-4 whitespace-nowrap">
+        Support Ergonomic & Tooling Grants →
+      </button>
+    </div>
+  </section>
+
+  <!-- DYNAMIC VIEW CONTAINER -->
+  <main id="appContent" class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+    <!-- Views rendered via JavaScript -->
+  </main>
+
+  <!-- CART SLIDE-OVER DRAWER -->
+  <div id="cartDrawer" class="fixed inset-0 z-50 overflow-hidden pointer-events-none transition-opacity duration-300 opacity-0">
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-stone-900/60 backdrop-blur-sm transition-opacity" onclick="toggleCartDrawer()"></div>
+    
+    <div class="fixed inset-y-0 right-0 max-w-full flex pl-10">
+      <div id="cartPanel" class="w-screen max-w-md bg-white shadow-2xl flex flex-col pointer-events-auto transform translate-x-full transition duration-300 ease-in-out">
+        
+        <!-- Cart Header -->
+        <div class="p-5 border-b border-stone-200 flex items-center justify-between bg-stone-50">
+          <div class="flex items-center gap-2">
+            <i data-lucide="shopping-bag" class="w-5 h-5 text-terracotta-600"></i>
+            <h2 class="text-lg font-bold text-clay-900">Your Artisan Guild Basket</h2>
+          </div>
+          <button onclick="toggleCartDrawer()" class="text-stone-400 hover:text-stone-600 p-1 rounded-lg">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <!-- Cart Items List -->
+        <div id="cartItemsContainer" class="flex-1 overflow-y-auto p-5 space-y-4">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- SafeTransit Bio-Packaging & Tip Add-ons -->
+        <div class="p-5 bg-stone-50 border-t border-stone-200 space-y-3 text-xs">
+          <div class="flex items-start gap-3 p-3 bg-emerald-50 rounded-xl border border-emerald-200">
+            <i data-lucide="box" class="w-5 h-5 text-emerald-600 shrink-0 mt-0.5"></i>
+            <div>
+              <div class="font-bold text-emerald-900 flex items-center justify-between">
+                <span>SafeTransit™ Bio-Straw Packaging</span>
+                <span class="text-emerald-700 font-bold">FREE INCLUDED</span>
+              </div>
+              <p class="text-emerald-800 text-[11px] mt-0.5">
+                Drop-tested bio-moulded paddy straw cushions fragile terracotta & Lippan glass against courier crush damage.
+              </p>
+            </div>
+          </div>
+
+          <!-- Artisan Welfare Tip Toggle -->
+          <div class="flex items-center justify-between p-3 bg-amber-50 rounded-xl border border-amber-200">
+            <div class="flex items-center gap-2">
+              <i data-lucide="heart" class="w-4 h-4 text-amber-600"></i>
+              <span class="font-medium text-amber-900">Support Artisan Ergonomic Grant</span>
+            </div>
+            <select id="welfareContribution" onchange="updateCartTotals()" class="bg-white border border-amber-300 rounded px-2 py-1 text-xs font-semibold text-amber-900">
+              <option value="0">₹0</option>
+              <option value="50" selected>+₹50</option>
+              <option value="100">+₹100</option>
+              <option value="250">+₹250</option>
+            </select>
+          </div>
+
+          <!-- Direct Realization Bar -->
+          <div class="pt-2">
+            <div class="flex justify-between text-[11px] font-semibold text-stone-600 mb-1">
+              <span>Artisan Direct Take-Home (78%)</span>
+              <span id="artisanDirectTakeHome" class="text-emerald-700 font-mono font-bold">₹0</span>
+            </div>
+            <div class="w-full bg-stone-200 rounded-full h-2 overflow-hidden flex">
+              <div id="artisanShareBar" class="bg-emerald-500 h-full" style="width: 78%;"></div>
+              <div class="bg-amber-400 h-full" style="width: 12%;" title="Bio-Packaging & Insurance"></div>
+              <div class="bg-stone-400 h-full" style="width: 10%;" title="Shipping & Guild Logistics"></div>
+            </div>
+            <p class="text-[10px] text-stone-500 mt-1 italic">
+              Commercial retail gives artisans only 15%-19%. On KalaSetu, artisans keep the majority of value.
+            </p>
+          </div>
+        </div>
+
+        <!-- Checkout Footer -->
+        <div class="p-5 border-t border-stone-200 bg-white space-y-3">
+          <div class="flex justify-between items-center text-sm">
+            <span class="text-stone-500">Order Subtotal</span>
+            <span id="cartDrawerSubtotal" class="font-bold text-stone-900 text-base font-mono">₹0</span>
+          </div>
+          <div class="flex justify-between items-center text-sm font-bold text-clay-900 text-lg">
+            <span>Total Payable</span>
+            <span id="cartDrawerTotal" class="text-terracotta-600 font-mono">₹0</span>
+          </div>
+          <button onclick="openCheckoutModal()" class="w-full py-3.5 bg-terracotta-600 hover:bg-terracotta-700 text-white font-bold rounded-xl shadow-lg shadow-terracotta-600/30 transition flex items-center justify-center gap-2">
+            <span>Proceed to Artisan Direct Checkout</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- CHECKOUT & PROVENANCE CERTIFICATE MODAL -->
+  <div id="checkoutModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-sm hidden">
+    <div class="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-stone-200 p-6 space-y-5">
+      <div class="flex justify-between items-center border-b pb-3">
+        <div>
+          <h3 class="text-lg font-bold text-clay-900 font-heritage">Direct-from-Kiln Checkout</h3>
+          <p class="text-xs text-stone-500">Every purchase generates an authentic Blockchain-style Certificate of Provenance</p>
+        </div>
+        <button onclick="closeCheckoutModal()" class="text-stone-400 hover:text-stone-600">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="checkoutForm" onsubmit="handlePlaceOrder(event)" class="space-y-4 text-xs">
+        <div>
+          <label class="block font-semibold text-stone-700 mb-1">Your Full Name / Delivery Patron</label>
+          <input type="text" id="custName" required placeholder="e.g. Aditi Sharma" class="w-full p-2.5 rounded-lg border border-stone-300 focus:ring-2 focus:ring-terracotta-500 focus:outline-none" value="Aarav Mehra" />
+        </div>
+        <div>
+          <label class="block font-semibold text-stone-700 mb-1">Contact Email & Phone (For Courier Tracking & SMS)</label>
+          <div class="grid grid-cols-2 gap-2">
+            <input type="email" id="custEmail" required placeholder="name@example.com" class="p-2.5 rounded-lg border border-stone-300 focus:ring-2 focus:ring-terracotta-500 focus:outline-none" value="aarav.artisanpatron@gmail.com" />
+            <input type="tel" id="custPhone" required placeholder="+91 98765 43210" class="p-2.5 rounded-lg border border-stone-300 focus:ring-2 focus:ring-terracotta-500 focus:outline-none" value="+91 98201 12345" />
+          </div>
+        </div>
+        <div>
+          <label class="block font-semibold text-stone-700 mb-1">Delivery Address</label>
+          <textarea id="custAddress" required rows="2" placeholder="Full street address, apartment, pincode" class="w-full p-2.5 rounded-lg border border-stone-300 focus:ring-2 focus:ring-terracotta-500 focus:outline-none">Flat 402, Heritage Palms, Indiranagar, Bengaluru, Karnataka - 560038</textarea>
+        </div>
+
+        <div class="p-3 bg-stone-50 rounded-xl border border-stone-200 space-y-2">
+          <div class="font-bold text-stone-800">Direct Payment Method</div>
+          <div class="space-y-1.5">
+            <label class="flex items-center gap-2 p-2 rounded border border-terracotta-300 bg-terracotta-50/50 cursor-pointer">
+              <input type="radio" name="paymethod" checked class="text-terracotta-600 focus:ring-terracotta-500" />
+              <div class="flex-1 flex justify-between items-center">
+                <span class="font-medium text-stone-800">UPI / GPay / PhonePe (0% Gateway Fee for Artisans)</span>
+                <span class="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded font-bold">Fastest</span>
+              </div>
+            </label>
+            <label class="flex items-center gap-2 p-2 rounded border border-stone-200 hover:bg-stone-100 cursor-pointer">
+              <input type="radio" name="paymethod" class="text-terracotta-600 focus:ring-terracotta-500" />
+              <span>Credit / Debit Card / NetBanking</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="flex justify-between items-center pt-2 border-t">
+          <div>
+            <div class="text-[10px] text-stone-500 uppercase tracking-wider">Total to Pay</div>
+            <div id="checkoutModalTotal" class="text-xl font-bold font-mono text-terracotta-600">₹0</div>
+          </div>
+          <button type="submit" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md transition flex items-center gap-2">
+            <i data-lucide="check-circle" class="w-4 h-4"></i>
+            <span>Confirm & Dispatch Direct</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ORDER SUCCESS & PROVENANCE CERTIFICATE MODAL -->
+  <div id="provenanceModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/70 backdrop-blur-sm hidden">
+    <div class="bg-amber-50 rounded-2xl max-w-xl w-full p-6 sm:p-8 border-4 border-amber-300 shadow-2xl relative text-center space-y-4">
+      <button onclick="closeProvenanceModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-600">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="w-16 h-16 mx-auto bg-amber-100 rounded-full flex items-center justify-center border-2 border-amber-400">
+        <i data-lucide="award" class="w-8 h-8 text-amber-700"></i>
+      </div>
+
+      <div>
+        <span class="text-xs font-bold tracking-widest uppercase text-terracotta-700">KalaSetu Heritage Verification Registry</span>
+        <h2 class="text-2xl font-bold font-heritage text-clay-900 mt-1">Certificate of Provenance</h2>
+        <p class="text-xs text-stone-600 font-mono mt-0.5" id="certNumber">CERT #KS-IND-884920</p>
+      </div>
+
+      <div class="bg-white p-4 rounded-xl border border-amber-200 text-left text-xs space-y-2 shadow-inner">
+        <div class="flex justify-between border-b pb-1.5">
+          <span class="text-stone-500">Patron Beneficiary:</span>
+          <strong id="certPatron" class="text-stone-800">Aarav Mehra</strong>
+        </div>
+        <div class="flex justify-between border-b pb-1.5">
+          <span class="text-stone-500">Artisans Direct Benefited:</span>
+          <strong id="certArtisans" class="text-terracotta-700">Dipankar Kundu (Bishnupur)</strong>
+        </div>
+        <div class="flex justify-between border-b pb-1.5">
+          <span class="text-stone-500">Direct Earnings Disbursed:</span>
+          <strong id="certDirectPayout" class="text-emerald-700 font-mono font-bold">₹1,240 (78% of order)</strong>
+        </div>
+        <div class="flex justify-between border-b pb-1.5">
+          <span class="text-stone-500">Transit Protection:</span>
+          <span class="text-emerald-700 font-medium">SafeTransit™ Bio-Straw Mold & Guaranteed Free Replacement</span>
+        </div>
+        <div class="flex justify-between pt-1">
+          <span class="text-stone-500">GI Heritage Validation:</span>
+          <span class="text-stone-700">Authenticated Traditional Hand-Formed Lineage</span>
+        </div>
+      </div>
+
+      <p class="text-[11px] text-stone-500 italic">
+        "Thank you for bypassing middleman exploitation. Your purchase directly fuels the living lineage of India's earth and clay masters."
+      </p>
+
+      <div class="flex gap-3 justify-center pt-2">
+        <button onclick="window.print()" class="px-4 py-2 bg-stone-800 hover:bg-stone-900 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow">
+          <i data-lucide="printer" class="w-3.5 h-3.5"></i> Print Certificate
+        </button>
+        <button onclick="closeProvenanceModal(); switchView('marketplace')" class="px-5 py-2 bg-terracotta-600 hover:bg-terracotta-700 text-white rounded-lg text-xs font-semibold shadow">
+          Return to Marketplace
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="bg-clay-900 text-stone-400 text-xs py-10 border-t border-stone-800 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div class="space-y-2">
+          <div class="flex items-center gap-2">
+            <span class="font-heritage text-lg text-white font-bold">KalaSetu (कला सेतु)</span>
+          </div>
+          <p class="text-stone-400 text-xs leading-relaxed">
+            Direct-to-Connoisseur e-commerce ecosystem empowering the 7 surveyed Indian clay and ceramic artisan clusters with fair margins, drop-tested eco packaging, and vernacular ONDC digital onboarding.
+          </p>
+        </div>
+        <div>
+          <h4 class="text-white font-bold mb-2">The Seven Artisan Clusters</h4>
+          <ul class="space-y-1 text-stone-400">
+            <li>Nayanben (Wall Mirrors, Gujarat)</li>
+            <li>Priya Jethwa (Lippan Art, Kutch)</li>
+            <li>Nand Kishore (GI Blue Pottery, Jaipur)</li>
+            <li>Shibu Biswas (Miniatures, Nadia)</li>
+            <li>Dipankar Kundu (Terracotta, Bishnupur)</li>
+            <li>Santu Roy (Monumental Arts, Kolkata)</li>
+            <li>Deepak Prajapati (GI Black Pottery, UP)</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-white font-bold mb-2">Key Interventions Solved</h4>
+          <ul class="space-y-1 text-stone-400">
+            <li>&bull; Bio-Composite Straw Packaging (28% to &lt;4% breakage)</li>
+            <li>&bull; Eliminating 33% Subcontracting Framing</li>
+            <li>&bull; Vernacular AI Voice Onboarding for ONDC</li>
+            <li>&bull; Ergonomic 30° Easel Retrofits (RULA 6 to 2)</li>
+            <li>&bull; Escrow Milestone Protection for Custom Works</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-white font-bold mb-2">Transparency & Ethics</h4>
+          <p class="text-stone-400 leading-relaxed mb-3">
+            100% of order values are transparently audited. Zero distributor margin gouging. GI tags and artisan signatures verified.
+          </p>
+          <div class="p-2.5 bg-stone-800/80 rounded-lg border border-stone-700 text-[11px]">
+            <span class="text-amber-400 font-bold block mb-1">Open Commerce Network (ONDC)</span>
+            <span>Compatible with Beckn Protocol 1.2.0 for pan-India catalog interoperability.</span>
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-stone-800 pt-6 flex flex-wrap justify-between items-center text-stone-500 text-[11px]">
+        <span>&copy; 2026 KalaSetu Artisan Guild. Rooted in field survey research of Indian handicrafts.</span>
+        <span>Built with pride for Bharat's indigenous clay & ceramic lineage.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SCRIPT APPLICATION LOGIC -->
+  <script>
+    // Global State
+    let ARTISANS = [];
+    let ALL_PRODUCTS = [];
+    let INTERVENTIONS = [];
+    let UNIT_ECONOMICS = {};
+    let cart = [];
+    let currentCurrency = 'INR'; // INR or USD
+    let activeFilter = 'all';
+    let currentView = 'marketplace';
+    let selectedArtisanId = null;
+
+    // Currency Formatter
+    function formatMoney(amountInInr) {
+      if (currentCurrency === 'USD') {
+        const usd = (amountInInr / 84).toFixed(2);
+        return `$${usd}`;
+      }
+      return `₹${amountInInr.toLocaleString('en-IN')}`;
+    }
+
+    function toggleCurrency() {
+      currentCurrency = currentCurrency === 'INR' ? 'USD' : 'INR';
+      document.getElementById('currencyBtn').textContent = currentCurrency === 'INR' ? 'INR (₹)' : 'USD ($)';
+      renderView();
+      renderCartDrawer();
+    }
+
+    // Load Data
+    async function initData() {
+      try {
+        let data = window.__ARTISAN_DATA__;
+        if (!data) {
+          const res = await fetch('/data/artisans.json');
+          data = await res.json();
+        }
+        ARTISANS = data.artisans;
+        INTERVENTIONS = data.interventionsCatalog;
+        UNIT_ECONOMICS = data.unitEconomicsBenchmark;
+        ALL_PRODUCTS = ARTISANS.flatMap(a => a.products.map(p => ({
+          ...p,
+          artisanId: a.id,
+          artisanName: a.name,
+          artisanLocation: a.location,
+          artisanCraft: a.craft,
+          artisanAvatar: a.avatar,
+          giCertified: a.giCertified || false,
+          giTagNumber: a.giTagNumber || null
+        })));
+        renderView();
+      } catch (err) {
+        console.error("Failed to fetch data, fallback to embedded state:", err);
+      }
+    }
+
+    // View Switching
+    function switchView(viewName, param = null) {
+      currentView = viewName;
+      if (param) selectedArtisanId = param;
+      
+      // Update nav styling
+      const navIds = ['marketplace', 'artisans', 'calculator', 'commissions', 'b2b', 'ondc-voice'];
+      navIds.forEach(id => {
+        const btn = document.getElementById(`nav-${id}`);
+        if (btn) {
+          if (id === viewName) {
+            btn.className = "px-3 py-1.5 rounded-lg text-terracotta-600 bg-terracotta-50 font-semibold transition";
+          } else {
+            btn.className = "px-3 py-1.5 rounded-lg text-stone-600 hover:text-stone-900 hover:bg-stone-100 transition";
+          }
+        }
+      });
+
+      renderView();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function handleFilter(category) {
+      activeFilter = category;
+      renderView();
+    }
+
+    function handleSearch(query) {
+      const q = query.toLowerCase().trim();
+      const container = document.getElementById('productsGrid');
+      if (!container) return;
+
+      const filtered = ALL_PRODUCTS.filter(p => 
+        p.title.toLowerCase().includes(q) ||
+        p.category.toLowerCase().includes(q) ||
+        p.artisanName.toLowerCase().includes(q) ||
+        p.artisanCraft.toLowerCase().includes(q) ||
+        p.description.toLowerCase().includes(q)
+      );
+      renderProductCards(filtered);
+    }
+
+    // Main Renderer
+    function renderView() {
+      const container = document.getElementById('appContent');
+      if (!container) return;
+
+      if (currentView === 'marketplace') {
+        renderMarketplaceView(container);
+      } else if (currentView === 'artisans') {
+        renderArtisansView(container);
+      } else if (currentView === 'artisan-detail') {
+        renderArtisanDetailView(container, selectedArtisanId);
+      } else if (currentView === 'calculator') {
+        renderCalculatorView(container);
+      } else if (currentView === 'commissions') {
+        renderCommissionsView(container);
+      } else if (currentView === 'b2b') {
+        renderB2bView(container);
+      } else if (currentView === 'ondc-voice') {
+        renderOndcVoiceView(container);
+      } else if (currentView === 'fund') {
+        renderFundView(container);
+      }
+      
+      lucide.createIcons();
+    }
+
+    // 1. MARKETPLACE VIEW
+    function renderMarketplaceView(container) {
+      let filtered = ALL_PRODUCTS;
+      if (activeFilter === 'gi') {
+        filtered = ALL_PRODUCTS.filter(p => p.giCertified);
+      } else if (activeFilter !== 'all') {
+        filtered = ALL_PRODUCTS.filter(p => p.category.toLowerCase().includes(activeFilter.toLowerCase()));
+      }
+
+      container.innerHTML = `
+        <div class="space-y-8">
+          
+          <!-- HERO BANNER -->
+          <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-clay-900 via-stone-800 to-terracotta-800 text-white p-8 sm:p-12 shadow-xl border border-stone-700">
+            <div class="relative z-10 max-w-2xl space-y-4">
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30 text-xs font-semibold">
+                <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i>
+                <span>Transforming Indian Ceramic & Clay Outreach</span>
+              </div>
+              <h1 class="font-heritage text-3xl sm:text-5xl font-bold tracking-tight text-white leading-tight">
+                Direct from the Master's Kiln to Your Living Space
+              </h1>
+              <p class="text-stone-300 text-sm sm:text-base leading-relaxed">
+                Connect directly with 7 distinguished artisan clusters across Gujarat, Rajasthan, Bengal & UP. Bypassing middleman markups, transit breakage, and predatory contracts.
+              </p>
+              <div class="flex flex-wrap gap-3 pt-2">
+                <button onclick="switchView('artisans')" class="px-5 py-2.5 rounded-xl bg-terracotta-500 hover:bg-terracotta-600 text-white font-bold text-xs shadow-md transition flex items-center gap-2">
+                  <i data-lucide="users" class="w-4 h-4"></i> Explore The 7 Master Clusters
+                </button>
+                <button onclick="switchView('calculator')" class="px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-stone-200 border border-white/20 font-bold text-xs transition flex items-center gap-2">
+                  <i data-lucide="pie-chart" class="w-4 h-4 text-amber-300"></i> See Transparent ₹1,000 Model
+                </button>
+              </div>
+            </div>
+            <!-- Decorative Accent -->
+            <div class="absolute -right-16 -bottom-16 w-80 h-80 rounded-full bg-terracotta-500/20 blur-3xl pointer-events-none"></div>
+          </div>
+
+          <!-- THE 7 ARTISANS QUICK PROFILE CHIPS -->
+          <div class="space-y-3">
+            <div class="flex justify-between items-center">
+              <div>
+                <h3 class="font-heritage text-lg font-bold text-clay-900">Featured Artisan Lineages</h3>
+                <p class="text-xs text-stone-500">Fieldwork surveyed master craftspeople</p>
+              </div>
+              <button onclick="switchView('artisans')" class="text-xs font-bold text-terracotta-600 hover:text-terracotta-700 flex items-center gap-1">
+                View All Clusters →
+              </button>
+            </div>
+            
+            <div class="flex gap-4 overflow-x-auto no-scrollbar py-2">
+              ${ARTISANS.map(a => `
+                <div onclick="switchView('artisan-detail', '${a.id}')" class="flex-shrink-0 w-64 glass-card p-3 rounded-2xl border border-stone-200 hover:border-terracotta-500 hover:shadow-md cursor-pointer transition flex items-center gap-3">
+                  <img src="${a.avatar}" alt="${a.name}" class="w-12 h-12 rounded-xl object-cover border border-stone-200 shadow-sm" />
+                  <div class="overflow-hidden">
+                    <h4 class="font-bold text-xs text-stone-900 truncate">${a.name}</h4>
+                    <p class="text-[11px] text-terracotta-600 font-medium truncate">${a.craft}</p>
+                    <span class="text-[10px] text-stone-400 block">${a.location}</span>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- CATEGORY FILTER CHIPS -->
+          <div class="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-stone-200">
+            <div class="flex flex-wrap gap-2 text-xs">
+              <button onclick="handleFilter('all')" class="px-3.5 py-1.5 rounded-full font-medium transition ${activeFilter === 'all' ? 'bg-clay-900 text-white' : 'bg-white text-stone-600 border border-stone-200 hover:bg-stone-50'}">
+                All Guild Works (${ALL_PRODUCTS.length})
+              </button>
+              <button onclick="handleFilter('gi')" class="px-3.5 py-1.5 rounded-full font-medium transition flex items-center gap-1.5 ${activeFilter === 'gi' ? 'bg-amber-600 text-white' : 'bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100'}">
+                <i data-lucide="award" class="w-3.5 h-3.5 text-amber-500"></i> GI-Certified Heritage
+              </button>
+              <button onclick="handleFilter('Terracotta')" class="px-3.5 py-1.5 rounded-full font-medium transition ${activeFilter === 'Terracotta' ? 'bg-terracotta-600 text-white' : 'bg-white text-stone-600 border border-stone-200 hover:bg-stone-50'}">
+                Bengal Terracotta
+              </button>
+              <button onclick="handleFilter('Blue Pottery')" class="px-3.5 py-1.5 rounded-full font-medium transition ${activeFilter === 'Blue Pottery' ? 'bg-cobalt-600 text-white' : 'bg-white text-stone-600 border border-stone-200 hover:bg-stone-50'}">
+                Jaipur Blue Pottery
+              </button>
+              <button onclick="handleFilter('Lippan Art')" class="px-3.5 py-1.5 rounded-full font-medium transition ${activeFilter === 'Lippan Art' ? 'bg-clay-900 text-white' : 'bg-white text-stone-600 border border-stone-200 hover:bg-stone-50'}">
+                Kutch Lippan Mud
+              </button>
+              <button onclick="handleFilter('Black Earthenware')" class="px-3.5 py-1.5 rounded-full font-medium transition ${activeFilter === 'Black Earthenware' ? 'bg-stone-800 text-white' : 'bg-white text-stone-600 border border-stone-200 hover:bg-stone-50'}">
+                Nizamabad Black Pottery
+              </button>
+              <button onclick="handleFilter('Miniature')" class="px-3.5 py-1.5 rounded-full font-medium transition ${activeFilter === 'Miniature' ? 'bg-clay-900 text-white' : 'bg-white text-stone-600 border border-stone-200 hover:bg-stone-50'}">
+                Realistic Miniatures
+              </button>
+            </div>
+            
+            <div class="text-xs text-stone-500">
+              Showing <strong>${filtered.length}</strong> mastercraft items
+            </div>
+          </div>
+
+          <!-- PRODUCTS GRID -->
+          <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            ${renderProductCardsHtml(filtered)}
+          </div>
+
+        </div>
+      `;
+    }
+
+    function renderProductCardsHtml(products) {
+      if (products.length === 0) {
+        return `
+          <div class="col-span-full py-16 text-center space-y-3 bg-white rounded-2xl border border-stone-200">
+            <i data-lucide="package-search" class="w-12 h-12 text-stone-300 mx-auto"></i>
+            <h4 class="font-bold text-stone-700">No craft items found matching this filter</h4>
+            <p class="text-xs text-stone-500">Try selecting another craft category or clearing search parameters.</p>
+          </div>
+        `;
+      }
+
+      return products.map(p => `
+        <div class="bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-lg hover:border-terracotta-400 transition flex flex-col group">
+          <!-- Image Container -->
+          <div class="relative h-56 overflow-hidden bg-stone-100">
+            <img src="${p.image}" alt="${p.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
+            
+            <!-- Badges -->
+            <div class="absolute top-2.5 left-2.5 flex flex-col gap-1 items-start">
+              ${p.giCertified ? `
+                <span class="bg-amber-500/95 text-white font-black text-[10px] px-2 py-0.5 rounded-full shadow-sm flex items-center gap-1 uppercase tracking-wider">
+                  <i data-lucide="award" class="w-3 h-3"></i> GI Tagged
+                </span>
+              ` : ''}
+              <span class="bg-stone-900/80 backdrop-blur-md text-stone-200 text-[10px] font-medium px-2 py-0.5 rounded-full">
+                ${p.category}
+              </span>
+            </div>
+
+            <div class="absolute top-2.5 right-2.5">
+              <span class="bg-emerald-600/90 backdrop-blur-md text-white font-bold text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1 shadow">
+                <i data-lucide="shield-check" class="w-3 h-3"></i> SafeTransit™
+              </span>
+            </div>
+          </div>
+
+          <!-- Content Body -->
+          <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
+            <div>
+              <!-- Artisan Attribution -->
+              <div class="flex items-center justify-between text-xs text-stone-500 mb-1">
+                <button onclick="switchView('artisan-detail', '${p.artisanId}')" class="font-medium hover:text-terracotta-600 hover:underline flex items-center gap-1">
+                  <i data-lucide="user" class="w-3 h-3 text-terracotta-500"></i> ${p.artisanName}
+                </button>
+                <span class="text-[10px] text-stone-400">${p.artisanLocation.split(',')[0]}</span>
+              </div>
+
+              <!-- Product Title -->
+              <h4 class="font-bold text-sm text-clay-900 group-hover:text-terracotta-600 transition leading-snug line-clamp-2">
+                ${p.title}
+              </h4>
+              <p class="text-[11px] text-stone-500 line-clamp-2 mt-1">
+                ${p.description}
+              </p>
+            </div>
+
+            <!-- Unit Economics & Price Details -->
+            <div class="pt-2 border-t border-stone-100 space-y-2">
+              <!-- Fair-Share Transparency Tag -->
+              <div class="bg-emerald-50 rounded-lg p-2 border border-emerald-100 flex items-center justify-between text-[11px]">
+                <span class="text-emerald-800 font-medium">Artisan Direct Share:</span>
+                <strong class="text-emerald-700 font-mono font-bold">${formatMoney(p.artisanShare)}</strong>
+              </div>
+
+              <div class="flex items-baseline justify-between">
+                <div>
+                  <span class="text-lg font-bold font-mono text-clay-900">${formatMoney(p.price)}</span>
+                  <span class="text-xs text-stone-400 line-through ml-1.5">${formatMoney(p.originalMktPrice)}</span>
+                </div>
+                <div class="text-[10px] text-amber-700 font-bold bg-amber-50 px-2 py-0.5 rounded">
+                  Stock: ${p.stock}
+                </div>
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="grid grid-cols-2 gap-2 pt-1">
+                <button onclick="switchView('artisan-detail', '${p.artisanId}')" class="py-2 px-3 rounded-xl border border-stone-200 text-stone-700 hover:bg-stone-50 text-xs font-semibold transition text-center">
+                  Story & Details
+                </button>
+                <button onclick="addToCart('${p.id}')" class="py-2 px-3 rounded-xl bg-terracotta-500 hover:bg-terracotta-600 text-white text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-sm shadow-terracotta-500/20">
+                  <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add to Bag
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderProductCards(products) {
+      const container = document.getElementById('productsGrid');
+      if (container) {
+        container.innerHTML = renderProductCardsHtml(products);
+        lucide.createIcons();
+      }
+    }
+
+    // 2. ARTISANS VIEW ("Meet The 7 Masters")
+    function renderArtisansView(container) {
+      container.innerHTML = `
+        <div class="space-y-8">
+          <div class="text-center max-w-2xl mx-auto space-y-2">
+            <span class="text-xs font-bold uppercase tracking-widest text-terracotta-600">Decision-Support Fieldwork Guild</span>
+            <h2 class="font-heritage text-3xl font-bold text-clay-900">The Seven Artisan Clusters</h2>
+            <p class="text-xs text-stone-600">
+              Direct insights, technical constraints, ergonomic burdens, and engineering interventions proposed across India's master clay and ceramic centers.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            ${ARTISANS.map(a => `
+              <div class="bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col justify-between">
+                <div>
+                  <div class="relative h-44">
+                    <img src="${a.banner}" alt="${a.craft}" class="w-full h-full object-cover" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                    <div class="absolute bottom-3 left-3 right-3 flex items-end gap-3">
+                      <img src="${a.avatar}" alt="${a.name}" class="w-14 h-14 rounded-full border-2 border-white object-cover shadow" />
+                      <div class="text-white overflow-hidden">
+                        <h4 class="font-bold text-base leading-tight">${a.name}</h4>
+                        <p class="text-xs text-amber-300 font-medium">${a.craft}</p>
+                        <span class="text-[10px] text-stone-300">${a.location}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="p-5 space-y-4 text-xs">
+                    <p class="text-stone-600 leading-relaxed">${a.story}</p>
+                    
+                    <!-- Survey Metrics Box -->
+                    <div class="bg-stone-50 rounded-xl p-3 border border-stone-200 space-y-2">
+                      <div class="flex justify-between items-center text-[11px]">
+                        <span class="text-stone-500">Ergonomic Strain Score:</span>
+                        <span class="font-mono font-bold ${a.ergonomicRisk.score >= 8 ? 'text-red-600' : 'text-amber-600'}">
+                          ${a.ergonomicRisk.assessment} ${a.ergonomicRisk.score} (${a.ergonomicRisk.observedPosture.split(';')[0]})
+                        </span>
+                      </div>
+                      <div class="flex justify-between items-center text-[11px]">
+                        <span class="text-stone-500">Transit Breakage Loss:</span>
+                        <span class="font-mono font-bold ${a.transitBreakagePct > 10 ? 'text-red-600' : 'text-emerald-700'}">
+                          ${a.transitBreakagePct}% of pieces cracked
+                        </span>
+                      </div>
+                      <div class="flex justify-between items-center text-[11px]">
+                        <span class="text-stone-500">Scale & Workforce:</span>
+                        <span class="font-medium text-stone-800">${a.scale}</span>
+                      </div>
+                    </div>
+
+                    <!-- Primary Bottleneck -->
+                    <div class="border-l-2 border-terracotta-500 pl-2.5 py-0.5">
+                      <span class="text-[10px] font-bold text-terracotta-700 uppercase">Primary Bottleneck Solved:</span>
+                      <p class="text-[11px] text-stone-700 mt-0.5">${a.bottlenecks[0]}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="p-5 pt-0 border-t border-stone-100 flex gap-2">
+                  <button onclick="switchView('artisan-detail', '${a.id}')" class="flex-1 py-2.5 rounded-xl bg-terracotta-50 hover:bg-terracotta-100 text-terracotta-700 font-bold text-xs transition text-center">
+                    View Master Profile & Works (${a.products.length})
+                  </button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    // 3. ARTISAN DETAIL VIEW
+    function renderArtisanDetailView(container, artisanId) {
+      const a = ARTISANS.find(item => item.id === artisanId) || ARTISANS[0];
+
+      container.innerHTML = `
+        <div class="space-y-8">
+          <!-- Back button -->
+          <button onclick="switchView('artisans')" class="text-xs font-bold text-stone-600 hover:text-stone-900 flex items-center gap-1.5">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to all 7 clusters
+          </button>
+
+          <!-- Master Header Card -->
+          <div class="bg-white rounded-3xl border border-stone-200 overflow-hidden shadow-sm">
+            <div class="relative h-64 sm:h-80">
+              <img src="${a.banner}" alt="${a.craft}" class="w-full h-full object-cover" />
+              <div class="absolute inset-0 bg-gradient-to-t from-clay-900 via-clay-900/40 to-transparent"></div>
+              
+              <div class="absolute bottom-6 left-6 right-6 flex flex-wrap items-end justify-between gap-4 text-white">
+                <div class="flex items-center gap-4">
+                  <img src="${a.avatar}" alt="${a.name}" class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl border-4 border-white object-cover shadow-lg" />
+                  <div>
+                    <div class="flex items-center gap-2">
+                      <h1 class="font-heritage text-2xl sm:text-4xl font-bold">${a.name}</h1>
+                      ${a.giCertified ? `
+                        <span class="bg-amber-400 text-slate-900 text-xs font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                          ${a.giTagNumber}
+                        </span>
+                      ` : ''}
+                    </div>
+                    <p class="text-amber-300 text-sm font-semibold">${a.craft}</p>
+                    <p class="text-xs text-stone-300 flex items-center gap-1 mt-0.5">
+                      <i data-lucide="map-pin" class="w-3.5 h-3.5"></i> ${a.location} &bull; ${a.scale}
+                    </p>
+                  </div>
+                </div>
+
+                <div class="flex gap-2">
+                  <button onclick="switchView('commissions')" class="px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-md transition flex items-center gap-1.5">
+                    <i data-lucide="hammer" class="w-4 h-4"></i> Request Custom Piece
+                  </button>
+                  <button onclick="switchView('ondc-voice')" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md transition flex items-center gap-1.5">
+                    <i data-lucide="mic" class="w-4 h-4"></i> Voice Onboarding
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Deep Dive Grid -->
+            <div class="p-6 sm:p-8 grid grid-cols-1 md:grid-cols-3 gap-6 text-xs">
+              <div class="space-y-4 md:col-span-2">
+                <div>
+                  <h3 class="font-bold text-sm text-stone-900 mb-1">Craft Lineage & Studio Background</h3>
+                  <p class="text-stone-600 leading-relaxed text-sm">${a.story}</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                  <div class="p-3 bg-stone-50 rounded-xl border border-stone-200">
+                    <span class="text-stone-400 block text-[10px] uppercase font-bold">Materials & Formulation</span>
+                    <strong class="text-stone-800 text-xs">${a.materials}</strong>
+                  </div>
+                  <div class="p-3 bg-stone-50 rounded-xl border border-stone-200">
+                    <span class="text-stone-400 block text-[10px] uppercase font-bold">Production Capacity</span>
+                    <strong class="text-stone-800 text-xs">${a.capacity}</strong>
+                  </div>
+                  <div class="p-3 bg-stone-50 rounded-xl border border-stone-200">
+                    <span class="text-stone-400 block text-[10px] uppercase font-bold">Mechanization Status</span>
+                    <strong class="text-stone-800 text-xs">${a.mechanizationLevel}</strong>
+                  </div>
+                  <div class="p-3 bg-stone-50 rounded-xl border border-stone-200">
+                    <span class="text-stone-400 block text-[10px] uppercase font-bold">Climate / Seasonal Vulnerability</span>
+                    <strong class="text-stone-800 text-xs">${a.climateVulnerability}</strong>
+                  </div>
+                </div>
+
+                <!-- Bottlenecks & Interventions -->
+                <div class="space-y-2 pt-2">
+                  <h4 class="font-bold text-xs text-stone-900">Surveyed Operational Bottlenecks:</h4>
+                  <ul class="space-y-1 text-stone-600">
+                    ${a.bottlenecks.map(b => `
+                      <li class="flex items-start gap-2">
+                        <i data-lucide="alert-triangle" class="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5"></i>
+                        <span>${b}</span>
+                      </li>
+                    `).join('')}
+                  </ul>
+                </div>
+              </div>
+
+              <!-- Ergonomic & Technological Intervention Card -->
+              <div class="p-5 bg-gradient-to-br from-terracotta-50 to-stone-50 rounded-2xl border border-terracotta-200 space-y-4">
+                <div class="flex items-center gap-2">
+                  <i data-lucide="activity" class="w-5 h-5 text-terracotta-600"></i>
+                  <h4 class="font-bold text-stone-900 text-sm">Ergonomic & Engineering Audit</h4>
+                </div>
+
+                <div class="space-y-3">
+                  <div>
+                    <div class="flex justify-between font-bold text-stone-800">
+                      <span>Ergonomic Hazard Score:</span>
+                      <span class="${a.ergonomicRisk.score >= 8 ? 'text-red-600' : 'text-amber-700'} font-mono">${a.ergonomicRisk.assessment} ${a.ergonomicRisk.score}</span>
+                    </div>
+                    <p class="text-[11px] text-stone-600 mt-0.5"><strong>Posture:</strong> ${a.ergonomicRisk.observedPosture}</p>
+                    <p class="text-[11px] text-stone-500 mt-0.5"><strong>Symptoms:</strong> ${a.ergonomicRisk.symptoms}</p>
+                  </div>
+
+                  <div class="border-t border-terracotta-200 pt-2">
+                    <span class="text-stone-500 text-[10px] uppercase font-bold block">Transit Fragility Factor:</span>
+                    <span class="font-bold text-stone-900 font-mono text-base">${a.transitBreakagePct}% breakage in standard logistics</span>
+                    <p class="text-[10px] text-stone-500 mt-0.5">${a.packagingContext}</p>
+                  </div>
+
+                  <div class="bg-white p-3 rounded-xl border border-terracotta-200 space-y-1">
+                    <span class="text-terracotta-700 font-bold text-[10px] uppercase block">Appropriate Technology Solution:</span>
+                    <p class="text-stone-800 text-[11px] font-semibold">${a.targetIntervention}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Master's Products Catalog -->
+          <div class="space-y-4">
+            <h3 class="font-heritage text-xl font-bold text-clay-900">Works by ${a.name}</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              ${renderProductCardsHtml(a.products.map(p => ({
+                ...p,
+                artisanId: a.id,
+                artisanName: a.name,
+                artisanLocation: a.location,
+                artisanCraft: a.craft,
+                artisanAvatar: a.avatar,
+                giCertified: a.giCertified || false,
+                giTagNumber: a.giTagNumber || null
+              })))}
+            </div>
+          </div>
+
+        </div>
+      `;
+    }
+
+    // 4. FAIR-SHARE TRANSPARENCY CALCULATOR
+    function renderCalculatorView(container) {
+      container.innerHTML = `
+        <div class="space-y-8 max-w-4xl mx-auto">
+          <div class="text-center space-y-2">
+            <span class="text-xs font-bold uppercase tracking-widest text-emerald-600">Decision-Support Table 2</span>
+            <h2 class="font-heritage text-3xl font-bold text-clay-900">Unit Economics & Fair-Share Transparency</h2>
+            <p class="text-xs text-stone-600 max-w-xl mx-auto">
+              Comparing normalized ₹1,000 retail realization: Traditional intermediary distribution vs KalaSetu direct guild architecture.
+            </p>
+          </div>
+
+          <!-- Dynamic Comparison Toggle -->
+          <div class="bg-white rounded-3xl border border-stone-200 p-6 sm:p-8 shadow-sm space-y-6">
+            <div class="flex flex-wrap justify-between items-center gap-4 border-b border-stone-200 pb-4">
+              <div>
+                <h3 class="font-bold text-stone-900 text-sm">Select Artisan Cluster Model</h3>
+                <p class="text-xs text-stone-500">Examine how value leaks in traditional channels</p>
+              </div>
+              <div class="flex gap-2">
+                <button onclick="setCalcCluster('dipankar')" id="calc-dipankar" class="px-3.5 py-1.5 rounded-xl font-semibold text-xs bg-terracotta-500 text-white shadow">
+                  Dipankar (Terracotta)
+                </button>
+                <button onclick="setCalcCluster('priya')" id="calc-priya" class="px-3.5 py-1.5 rounded-xl font-semibold text-xs bg-stone-100 text-stone-700 hover:bg-stone-200">
+                  Priya (Lippan Art)
+                </button>
+                <button onclick="setCalcCluster('nand')" id="calc-nand" class="px-3.5 py-1.5 rounded-xl font-semibold text-xs bg-stone-100 text-stone-700 hover:bg-stone-200">
+                  Nand Kishore (Blue Pottery)
+                </button>
+              </div>
+            </div>
+
+            <!-- Dynamic Model Breakdown Content -->
+            <div id="calcDynamicContent">
+              <!-- Rendered via updateCalcCluster() -->
+            </div>
+          </div>
+
+          <!-- Priority Findings Summary -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+            <div class="p-4 bg-red-50 rounded-2xl border border-red-200 space-y-1">
+              <span class="text-red-700 font-bold block">1. Terracotta Transit Loss</span>
+              <p class="text-red-900 text-[11px]">
+                Dipankar loses ₹280 of every ₹1,000 retail value to transit breakage (27.5%). Solved via ₹8-15 Bio-Straw molded inserts.
+              </p>
+            </div>
+            <div class="p-4 bg-amber-50 rounded-2xl border border-amber-200 space-y-1">
+              <span class="text-amber-700 font-bold block">2. Subcontracting Burden</span>
+              <p class="text-amber-900 text-[11px]">
+                Priya's outsourced frame base drains ₹333.30 per ₹1,000. In-house woodworking kits expand her take-home by 50%.
+              </p>
+            </div>
+            <div class="p-4 bg-blue-50 rounded-2xl border border-blue-200 space-y-1">
+              <span class="text-blue-700 font-bold block">3. Hourly Realization</span>
+              <p class="text-blue-900 text-[11px]">
+                Dipankar earned only ₹13.10/hour; KalaSetu direct guild boosts family hourly return to over ₹58.40/hour.
+              </p>
+            </div>
+          </div>
+
+        </div>
+      `;
+      setCalcCluster('dipankar');
+    }
+
+    let activeCalcCluster = 'dipankar';
+    function setCalcCluster(cluster) {
+      activeCalcCluster = cluster;
+      ['dipankar', 'priya', 'nand'].forEach(c => {
+        const btn = document.getElementById(`calc-${c}`);
+        if (btn) {
+          if (c === cluster) {
+            btn.className = "px-3.5 py-1.5 rounded-xl font-semibold text-xs bg-terracotta-500 text-white shadow";
+          } else {
+            btn.className = "px-3.5 py-1.5 rounded-xl font-semibold text-xs bg-stone-100 text-stone-700 hover:bg-stone-200";
+          }
+        }
+      });
+
+      const container = document.getElementById('calcDynamicContent');
+      if (!container) return;
+
+      if (cluster === 'dipankar') {
+        container.innerHTML = `
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-xs">
+            
+            <!-- Traditional Channel -->
+            <div class="p-5 rounded-2xl bg-stone-50 border border-stone-200 space-y-4">
+              <div class="flex justify-between items-center border-b pb-2">
+                <span class="font-bold text-stone-900 text-sm">Traditional Rural Mela / Aggregator</span>
+                <span class="text-red-600 font-mono font-bold">Only ₹190 (19%)</span>
+              </div>
+              
+              <div class="space-y-2 text-stone-600">
+                <div class="flex justify-between">
+                  <span>Gross Retail Reference:</span>
+                  <strong class="text-stone-900 font-mono">₹1,000</strong>
+                </div>
+                <div class="flex justify-between text-red-600 font-medium">
+                  <span>Transit Breakage Loss (27.5%):</span>
+                  <span class="font-mono">-₹280.00</span>
+                </div>
+                <div class="flex justify-between">
+                  <span>Raw Clay & River Sand:</span>
+                  <span class="font-mono">-₹180.00</span>
+                </div>
+                <div class="flex justify-between">
+                  <span>Wood Firing / Pit Kiln Fuel:</span>
+                  <span class="font-mono">-₹200.00</span>
+                </div>
+                <div class="flex justify-between">
+                  <span>Logistics & Freight:</span>
+                  <span class="font-mono">-₹120.00</span>
+                </div>
+                <div class="flex justify-between">
+                  <span>Basic Straw / Newspaper Packing:</span>
+                  <span class="font-mono">-₹30.00</span>
+                </div>
+              </div>
+
+              <div class="pt-3 border-t border-stone-200 bg-white p-3 rounded-xl border">
+                <div class="flex justify-between font-bold text-stone-900">
+                  <span>Family Residual Margin:</span>
+                  <span class="text-red-700 font-mono">₹190.00 (19%)</span>
+                </div>
+                <div class="flex justify-between text-[11px] text-stone-500 mt-1">
+                  <span>Imputed Labor Hours:</span>
+                  <span class="font-mono">14.5 hours / unit</span>
+                </div>
+                <div class="flex justify-between font-bold text-xs text-red-700 mt-1">
+                  <span>Hourly Realization:</span>
+                  <span class="font-mono">₹13.10 / family-hour</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- KalaSetu Guild Model -->
+            <div class="p-5 rounded-2xl bg-emerald-50/60 border border-emerald-200 space-y-4">
+              <div class="flex justify-between items-center border-b border-emerald-200 pb-2">
+                <span class="font-bold text-emerald-950 text-sm">KalaSetu Direct Guild Platform</span>
+                <span class="text-emerald-700 font-mono font-bold">₹755 (75.5%)</span>
+              </div>
+
+              <div class="space-y-2 text-stone-600">
+                <div class="flex justify-between">
+                  <span>Gross Retail Reference:</span>
+                  <strong class="text-stone-900 font-mono">₹1,000</strong>
+                </div>
+                <div class="flex justify-between text-emerald-700 font-medium">
+                  <span>Transit Breakage Loss (Insured Bio-Straw):</span>
+                  <span class="font-mono">-₹20.00 (&lt;2%)</span>
+                </div>
+                <div class="flex justify-between">
+                  <span>Raw Clay & Mechanized Firing:</span>
+                  <span class="font-mono">-₹120.00</span>
+                </div>
+                <div class="flex justify-between">
+                  <span>Eco Bio-Composite Molded Straw:</span>
+                  <span class="font-mono">-₹15.00</span>
+                </div>
+                <div class="flex justify-between">
+                  <span>Guild Logistics & ONDC Routing:</span>
+                  <span class="font-mono">-₹90.00</span>
+                </div>
+              </div>
+
+              <div class="pt-3 border-t border-emerald-200 bg-white p-3 rounded-xl border border-emerald-200">
+                <div class="flex justify-between font-bold text-emerald-900">
+                  <span>Family Direct Take-Home:</span>
+                  <span class="text-emerald-700 font-mono text-base font-bold">₹755.00 (75.5%)</span>
+                </div>
+                <div class="flex justify-between text-[11px] text-stone-500 mt-1">
+                  <span>Imputed Labor (Kneader Assisted):</span>
+                  <span class="font-mono">11.0 hours</span>
+                </div>
+                <div class="flex justify-between font-bold text-xs text-emerald-800 mt-1">
+                  <span>Hourly Realization:</span>
+                  <span class="font-mono text-emerald-700 text-sm">₹68.60 / hour (+423%)</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        `;
+      } else if (cluster === 'priya') {
+        container.innerHTML = `
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-xs">
+            <div class="p-5 rounded-2xl bg-stone-50 border border-stone-200 space-y-4">
+              <div class="flex justify-between items-center border-b pb-2">
+                <span class="font-bold text-stone-900 text-sm">Traditional Outsourced Model</span>
+                <span class="text-amber-700 font-mono font-bold">₹333.30 (33.3%)</span>
+              </div>
+              <div class="space-y-2 text-stone-600">
+                <div class="flex justify-between text-red-600 font-bold">
+                  <span>Carpentry Subcontracting (Frame):</span>
+                  <span class="font-mono">-₹333.30 (33.3% loss!)</span>
+                </div>
+                <div class="flex justify-between"><span>Raw Materials (Mud, Chalk, Mirror):</span><span class="font-mono">-₹141.70</span></div>
+                <div class="flex justify-between"><span>Packaging / Bubble Cushion:</span><span class="font-mono">-₹75.00</span></div>
+                <div class="flex justify-between"><span>Logistics / Freight:</span><span class="font-mono">-₹116.70</span></div>
+                <div class="flex justify-between"><span>Courier Micro-Cracking:</span><span class="font-mono">-₹0.00 (absorbed)</span></div>
+              </div>
+              <div class="pt-3 border-t border-stone-200 bg-white p-3 rounded-xl border">
+                <div class="flex justify-between font-bold text-stone-900"><span>Priya's Take-Home:</span><span class="text-amber-700 font-mono">₹333.30</span></div>
+                <div class="flex justify-between text-stone-500 mt-1"><span>Imputed Labor Hours:</span><span class="font-mono">10.8 hrs</span></div>
+                <div class="flex justify-between font-bold text-stone-700 mt-1"><span>Hourly Return:</span><span class="font-mono">₹30.80 / hr</span></div>
+              </div>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-emerald-50/60 border border-emerald-200 space-y-4">
+              <div class="flex justify-between items-center border-b border-emerald-200 pb-2">
+                <span class="font-bold text-emerald-950 text-sm">KalaSetu (In-House Wood Tooling)</span>
+                <span class="text-emerald-700 font-mono font-bold">₹710.00 (71.0%)</span>
+              </div>
+              <div class="space-y-2 text-stone-600">
+                <div class="flex justify-between text-emerald-700 font-bold">
+                  <span>In-House Tooling (Electric Jigsaw):</span>
+                  <span class="font-mono">-₹45.00 (MDF sheet only!)</span>
+                </div>
+                <div class="flex justify-between"><span>Raw Materials & Mirrors:</span><span class="font-mono">-₹125.00</span></div>
+                <div class="flex justify-between"><span>Shock-Rated Corner Packaging:</span><span class="font-mono">-₹30.00</span></div>
+                <div class="flex justify-between"><span>Guild Direct Courier:</span><span class="font-mono">-₹90.00</span></div>
+              </div>
+              <div class="pt-3 border-t border-emerald-200 bg-white p-3 rounded-xl border border-emerald-200">
+                <div class="flex justify-between font-bold text-emerald-900"><span>Priya's Take-Home:</span><span class="text-emerald-700 font-mono font-bold text-base">₹710.00 (+113%)</span></div>
+                <div class="flex justify-between text-stone-500 mt-1"><span>Imputed Labor Hours:</span><span class="font-mono">9.5 hrs</span></div>
+                <div class="flex justify-between font-bold text-emerald-800 mt-1"><span>Hourly Return:</span><span class="font-mono text-emerald-700 text-sm">₹74.70 / hr (+142%)</span></div>
+              </div>
+            </div>
+          </div>
+        `;
+      } else {
+        container.innerHTML = `
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-xs">
+            <div class="p-5 rounded-2xl bg-stone-50 border border-stone-200 space-y-4">
+              <div class="flex justify-between items-center border-b pb-2">
+                <span class="font-bold text-stone-900 text-sm">Traditional Wholesale Distributor</span>
+                <span class="text-stone-700 font-mono font-bold">₹180.00 (18%)</span>
+              </div>
+              <div class="space-y-2 text-stone-600">
+                <div class="flex justify-between"><span>Quartz & Frit Materials:</span><span class="font-mono">-₹240.00</span></div>
+                <div class="flex justify-between"><span>Kiln Firing / Gas Fuel:</span><span class="font-mono">-₹180.00</span></div>
+                <div class="flex justify-between"><span>Hired Artisan Wage Labor:</span><span class="font-mono">-₹260.00</span></div>
+                <div class="flex justify-between"><span>Packaging / Partition Boxes:</span><span class="font-mono">-₹50.00</span></div>
+                <div class="flex justify-between"><span>Logistics & Freight:</span><span class="font-mono">-₹70.00</span></div>
+                <div class="flex justify-between"><span>Transit Breakage:</span><span class="font-mono">-₹20.00</span></div>
+              </div>
+              <div class="pt-3 border-t border-stone-200 bg-white p-3 rounded-xl border">
+                <div class="flex justify-between font-bold text-stone-900"><span>Residual Cash Margin:</span><span class="text-stone-800 font-mono">₹180.00</span></div>
+                <div class="flex justify-between text-red-600 font-bold mt-1"><span>Monsoon Freeze Hazard:</span><span>₹12-15 lakh idle loss</span></div>
+              </div>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-emerald-50/60 border border-emerald-200 space-y-4">
+              <div class="flex justify-between items-center border-b border-emerald-200 pb-2">
+                <span class="font-bold text-emerald-950 text-sm">KalaSetu Direct B2B & Retail</span>
+                <span class="text-emerald-700 font-mono font-bold">₹440.00 (44%)</span>
+              </div>
+              <div class="space-y-2 text-stone-600">
+                <div class="flex justify-between"><span>Bulk Direct Realization:</span><strong class="text-stone-900 font-mono">Direct Buyer Contract</strong></div>
+                <div class="flex justify-between"><span>Solar-Biomass Tunnel:</span><span class="text-emerald-700 font-medium">Zero Monsoon Shutdown</span></div>
+                <div class="flex justify-between"><span>Fair Wage Disbursal:</span><span class="font-mono">₹320.00 to 35 Artisans</span></div>
+                <div class="flex justify-between"><span>Drop-tested Pallet Cartons:</span><span class="font-mono">-₹35.00</span></div>
+              </div>
+              <div class="pt-3 border-t border-emerald-200 bg-white p-3 rounded-xl border border-emerald-200">
+                <div class="flex justify-between font-bold text-emerald-900"><span>Cluster Profit & Living Wages:</span><span class="text-emerald-700 font-mono font-bold text-base">₹440.00 (+144%)</span></div>
+                <div class="flex justify-between text-emerald-800 font-bold mt-1"><span>Monsoon Production Protected:</span><span>100% active</span></div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    // 5. BESPOKE CUSTOM COMMISSIONS & ESCROW
+    function renderCommissionsView(container) {
+      container.innerHTML = `
+        <div class="space-y-8 max-w-3xl mx-auto">
+          <div class="text-center space-y-2">
+            <span class="text-xs font-bold uppercase tracking-widest text-purple-600">Milestone Escrow & IP Protection</span>
+            <h2 class="font-heritage text-3xl font-bold text-clay-900">Bespoke Fine Art & Commission Studio</h2>
+            <p class="text-xs text-stone-600">
+              For master sculptors like <strong>Santu Roy</strong> (Monumental statues up to 22-foot) and <strong>Shibu Biswas</strong> (Museum-grade realistic miniatures). Zero buyer defaults, tamper-proof digital copyright.
+            </p>
+          </div>
+
+          <div class="bg-white rounded-3xl border border-stone-200 p-6 sm:p-8 shadow-sm space-y-6">
+            <form onsubmit="handleCommissionSubmit(event)" class="space-y-4 text-xs">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block font-semibold text-stone-700 mb-1">Select Master Sculptor</label>
+                  <select id="commArtisan" class="w-full p-2.5 rounded-xl border border-stone-300 focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                    <option value="santu-roy">Santu Roy (Monumental Sculptures, Bronze & Resin)</option>
+                    <option value="shibu-biswas">Shibu Biswas (Hyper-Realistic Nadia Silt Miniatures)</option>
+                    <option value="nayanben">Nayanben (Custom Floral Lippan Mirror Spec)</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block font-semibold text-stone-700 mb-1">Your Name / Organization</label>
+                  <input type="text" id="commClientName" required placeholder="e.g. Radisson Blu Luxury Lobby" class="w-full p-2.5 rounded-xl border border-stone-300 focus:ring-2 focus:ring-purple-500 focus:outline-none" value="Ananya Singhania" />
+                </div>
+              </div>
+
+              <div>
+                <label class="block font-semibold text-stone-700 mb-1">Commission Brief & Dimensional Requirements</label>
+                <textarea id="commBrief" rows="3" required placeholder="Describe dimensions, intended installation site, subject matter..." class="w-full p-2.5 rounded-xl border border-stone-300 focus:ring-2 focus:ring-purple-500 focus:outline-none">Commissioning a 3-foot realistic bronze-patina terracotta sculpture of Gurudev Rabindranath Tagore for our private cultural library in Bangalore.</textarea>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block font-semibold text-stone-700 mb-1">Estimated Budget (INR)</label>
+                  <input type="number" id="commBudget" value="45000" min="5000" class="w-full p-2.5 rounded-xl border border-stone-300 font-mono focus:ring-2 focus:ring-purple-500 focus:outline-none" />
+                </div>
+                <div>
+                  <label class="block font-semibold text-stone-700 mb-1">Target Installation Date</label>
+                  <input type="date" id="commDate" class="w-full p-2.5 rounded-xl border border-stone-300 focus:ring-2 focus:ring-purple-500 focus:outline-none" value="2027-01-15" />
+                </div>
+              </div>
+
+              <!-- Escrow Milestone Preview -->
+              <div class="p-4 bg-purple-50 rounded-2xl border border-purple-200 space-y-2">
+                <div class="flex items-center gap-2 font-bold text-purple-900">
+                  <i data-lucide="shield-check" class="w-4 h-4 text-purple-600"></i>
+                  <span>KalaSetu 3-Stage Escrow Protection Schedule:</span>
+                </div>
+                <div class="grid grid-cols-3 gap-2 text-[11px] pt-1">
+                  <div class="bg-white p-2.5 rounded-xl border border-purple-200">
+                    <span class="text-stone-400 block text-[10px]">STAGE 1 (25%)</span>
+                    <strong class="text-purple-900 font-semibold">Advance & Armature</strong>
+                    <span class="text-stone-500 block text-[10px] mt-0.5">Locks steel & raw materials</span>
+                  </div>
+                  <div class="bg-white p-2.5 rounded-xl border border-purple-200">
+                    <span class="text-stone-400 block text-[10px]">STAGE 2 (35%)</span>
+                    <strong class="text-purple-900 font-semibold">Clay Prototype 360°</strong>
+                    <span class="text-stone-500 block text-[10px] mt-0.5">Approved by patron</span>
+                  </div>
+                  <div class="bg-white p-2.5 rounded-xl border border-purple-200">
+                    <span class="text-stone-400 block text-[10px]">STAGE 3 (40%)</span>
+                    <strong class="text-purple-900 font-semibold">Crated Dispatch</strong>
+                    <span class="text-stone-500 block text-[10px] mt-0.5">Released upon safe delivery</span>
+                  </div>
+                </div>
+              </div>
+
+              <button type="submit" class="w-full py-3.5 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2">
+                <i data-lucide="file-check" class="w-4 h-4"></i>
+                <span>Register Commission with Escrow & IP Timestamp</span>
+              </button>
+            </form>
+
+            <div id="commissionResult" class="hidden"></div>
+          </div>
+        </div>
+      `;
+    }
+
+    async function handleCommissionSubmit(e) {
+      e.preventDefault();
+      const payload = {
+        artisanId: document.getElementById('commArtisan').value,
+        clientName: document.getElementById('commClientName').value,
+        brief: document.getElementById('commBrief').value,
+        budget: parseInt(document.getElementById('commBudget').value) || 30000
+      };
+
+      try {
+        const res = await fetch('/api/commissions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        
+        const resDiv = document.getElementById('commissionResult');
+        resDiv.className = "p-4 bg-emerald-50 rounded-2xl border border-emerald-300 space-y-2 text-xs";
+        resDiv.innerHTML = `
+          <div class="flex items-center gap-2 text-emerald-900 font-bold text-sm">
+            <i data-lucide="check-circle" class="w-5 h-5 text-emerald-600"></i>
+            <span>Commission Registered Successfully!</span>
+          </div>
+          <p class="text-emerald-800">Tracking Code: <strong class="font-mono">${data.commissionId}</strong> &bull; IP Hash: <code class="font-mono">${data.ipProtectionHash}</code></p>
+          <p class="text-stone-600 text-[11px]">The master artisan has received your brief and 3D specifications. Escrow contract generated without legal loopholes.</p>
+        `;
+        resDiv.classList.remove('hidden');
+        lucide.createIcons();
+      } catch (err) {
+        alert("Commission simulated registered locally!");
+      }
+    }
+
+    // 6. B2B WHOLESALE PORTAL
+    function renderB2bView(container) {
+      const nand = ARTISANS.find(a => a.id === 'nand-kishore');
+      container.innerHTML = `
+        <div class="space-y-8 max-w-4xl mx-auto">
+          <div class="text-center space-y-2">
+            <span class="text-xs font-bold uppercase tracking-widest text-cobalt-600">High-Volume Cluster Sourcing</span>
+            <h2 class="font-heritage text-3xl font-bold text-clay-900">B2B Wholesale & Hospitality Catalog</h2>
+            <p class="text-xs text-stone-600 max-w-xl mx-auto">
+              Connecting hotels, restaurants, interior architects, and export aggregators directly to factory clusters like Nand Kishore's 35-person Blue Pottery unit.
+            </p>
+          </div>
+
+          <div class="bg-gradient-to-r from-cobalt-700 to-stone-900 text-white rounded-3xl p-6 sm:p-8 space-y-4">
+            <div class="flex justify-between items-start flex-wrap gap-4">
+              <div>
+                <span class="bg-amber-400 text-slate-900 font-bold text-[10px] px-2 py-0.5 rounded uppercase">GI Tagged Jaipur Blue Pottery</span>
+                <h3 class="text-xl font-bold font-heritage mt-1">Nand Kishore Factory Cluster Capacity</h3>
+                <p class="text-stone-300 text-xs mt-0.5">35 master craftsmen &bull; Up to 10,000 units/month peak capacity</p>
+              </div>
+              <div class="text-right">
+                <span class="text-stone-300 text-xs">Standard Bulk Base:</span>
+                <div class="text-2xl font-mono font-bold text-amber-300">₹160 / 10" Plate</div>
+                <span class="text-[10px] text-stone-400">Retail price: ₹320 (50% direct savings)</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 text-xs">
+              <div class="bg-white/10 p-3 rounded-xl border border-white/10">
+                <span class="text-stone-300 text-[10px] block">Tier 1 (24 - 100 units)</span>
+                <strong class="text-white">₹180 / piece</strong>
+              </div>
+              <div class="bg-white/10 p-3 rounded-xl border border-white/10">
+                <span class="text-stone-300 text-[10px] block">Tier 2 (100 - 500 units)</span>
+                <strong class="text-white">₹160 / piece</strong>
+              </div>
+              <div class="bg-white/10 p-3 rounded-xl border border-white/10">
+                <span class="text-amber-300 text-[10px] block">Monsoon Pre-Order (500+ units)</span>
+                <strong class="text-white">₹140 / piece (Buffers idle season)</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- B2B Inquiry Form -->
+          <div class="bg-white rounded-3xl border border-stone-200 p-6 sm:p-8 space-y-4 shadow-sm text-xs">
+            <h4 class="font-bold text-stone-900 text-sm">Generate Direct Wholesale RFQ (Request for Quotation)</h4>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label class="block font-semibold text-stone-700 mb-1">Company / Brand Name</label>
+                <input type="text" id="b2bCompany" placeholder="e.g. Taj Heritage Hotels" class="w-full p-2.5 rounded-xl border border-stone-300" value="The Leela Palace Tableware Sourcing" />
+              </div>
+              <div>
+                <label class="block font-semibold text-stone-700 mb-1">Craft Line Required</label>
+                <select id="b2bCraft" class="w-full p-2.5 rounded-xl border border-stone-300">
+                  <option>Jaipur Blue Pottery Dinnerware (Nand Kishore)</option>
+                  <option>Nizamabad Black Pottery Chai Kulhars (Deepak Prajapati)</option>
+                  <option>Bengal Terracotta Garden Urns (Dipankar Kundu)</option>
+                </select>
+              </div>
+              <div>
+                <label class="block font-semibold text-stone-700 mb-1">Estimated Quantity (Units)</label>
+                <input type="number" id="b2bQty" value="250" class="w-full p-2.5 rounded-xl border border-stone-300 font-mono" />
+              </div>
+            </div>
+            <button onclick="handleB2bSubmit()" class="w-full py-3 bg-cobalt-600 hover:bg-cobalt-700 text-white font-bold rounded-xl shadow-md transition">
+              Dispatch RFQ Direct to Workshop Manager
+            </button>
+            <div id="b2bResult" class="hidden p-3 bg-emerald-50 rounded-xl border border-emerald-200 text-emerald-800"></div>
+          </div>
+        </div>
+      `;
+    }
+
+    function handleB2bSubmit() {
+      const res = document.getElementById('b2bResult');
+      res.classList.remove('hidden');
+      res.textContent = "RFQ Dispatched! Nand Kishore's studio manager will respond with pallet freight logistics within 24 hours.";
+    }
+
+    // 7. VERNACULAR AI ONDC VOICE ONBOARDING STUDIO
+    function renderOndcVoiceView(container) {
+      container.innerHTML = `
+        <div class="space-y-8 max-w-3xl mx-auto">
+          <div class="text-center space-y-2">
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-semibold">
+              <i data-lucide="radio" class="w-3.5 h-3.5 text-emerald-600 animate-pulse"></i>
+              <span>RuTAG & KalaSetu Open Commerce Engine</span>
+            </div>
+            <h2 class="font-heritage text-3xl font-bold text-clay-900">Vernacular AI Voice Onboarding (ONDC)</h2>
+            <p class="text-xs text-stone-600 max-w-xl mx-auto">
+              Empowering digitally illiterate artisans like <strong>Dipankar Kundu</strong> (Bishnupur) and <strong>Priya Jethwa</strong> (Kutch). Artisans speak in their native tongue; AI formats standard Beckn protocol listings.
+            </p>
+          </div>
+
+          <div class="bg-white rounded-3xl border border-stone-200 p-6 sm:p-8 shadow-sm space-y-6">
+            
+            <!-- Language & Artisan Selector -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+              <div>
+                <label class="block font-semibold text-stone-700 mb-1">Artisan Profile</label>
+                <select id="voiceArtisan" class="w-full p-2.5 rounded-xl border border-stone-300" onchange="updateVoicePrompt()">
+                  <option value="dipankar">Dipankar Kundu (Bishnupur, WB) - Bengali</option>
+                  <option value="priya">Priya Jethwa (Kutch, Gujarat) - Gujarati/Hindi</option>
+                  <option value="deepak">Deepak Prajapati (Azamgarh, UP) - Bhojpuri/Hindi</option>
+                </select>
+              </div>
+              <div>
+                <label class="block font-semibold text-stone-700 mb-1">Selected Native Dialect</label>
+                <div class="p-2.5 bg-stone-100 rounded-xl border font-bold text-stone-800" id="voiceDialect">
+                  বাংলা (Bengali - Rarh Region)
+                </div>
+              </div>
+            </div>
+
+            <!-- Simulated Voice Mic Button -->
+            <div class="text-center py-6 bg-stone-50 rounded-2xl border-2 border-dashed border-stone-300 space-y-3">
+              <button onclick="simulateVoiceRecording()" id="voiceMicBtn" class="w-20 h-20 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white shadow-xl shadow-emerald-500/30 flex items-center justify-center mx-auto transition transform hover:scale-105 active:scale-95">
+                <i data-lucide="mic" class="w-8 h-8"></i>
+              </button>
+              <div id="voiceStatus" class="text-xs font-semibold text-stone-600">
+                Click microphone to simulate artisan speaking product details
+              </div>
+              <div id="voiceTranscript" class="text-xs italic text-stone-500 max-w-md mx-auto hidden bg-white p-3 rounded-xl border"></div>
+            </div>
+
+            <!-- Auto-Generated ONDC Payload Card -->
+            <div id="ondcOutputCard" class="hidden space-y-3 pt-2 text-xs">
+              <div class="flex justify-between items-center">
+                <span class="font-bold text-stone-900 flex items-center gap-1.5">
+                  <i data-lucide="code" class="w-4 h-4 text-emerald-600"></i>
+                  <span>Mapped Beckn Protocol (ONDC-RETAIL-1.2.0)</span>
+                </span>
+                <span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-mono text-[10px] font-bold">LIVE SYNC READY</span>
+              </div>
+              <pre id="ondcJsonPayload" class="bg-stone-900 text-emerald-400 p-4 rounded-2xl text-[11px] font-mono overflow-x-auto max-h-60 leading-relaxed"></pre>
+              <button onclick="publishToOndcNetwork()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow transition flex items-center justify-center gap-2">
+                <i data-lucide="send" class="w-4 h-4"></i>
+                <span>Broadcast Catalog to All ONDC Buyer Apps (Paytm, Mystore, Magicpin)</span>
+              </button>
+            </div>
+
+          </div>
+        </div>
+      `;
+    }
+
+    function updateVoicePrompt() {
+      const art = document.getElementById('voiceArtisan').value;
+      const dialect = document.getElementById('voiceDialect');
+      if (art === 'dipankar') dialect.textContent = "বাংলা (Bengali - Rarh Region)";
+      if (art === 'priya') dialect.textContent = "ગુજરાતી (Kutchi / Gujarati)";
+      if (art === 'deepak') dialect.textContent = "हिन्दी / भोजपुरी (Purvanchal UP)";
+    }
+
+    function simulateVoiceRecording() {
+      const btn = document.getElementById('voiceMicBtn');
+      const status = document.getElementById('voiceStatus');
+      const trans = document.getElementById('voiceTranscript');
+      const output = document.getElementById('ondcOutputCard');
+      const jsonBox = document.getElementById('ondcJsonPayload');
+
+      btn.className = "w-20 h-20 rounded-full bg-red-500 animate-pulse text-white shadow-xl flex items-center justify-center mx-auto";
+      status.textContent = "Listening to artisan speech... Processing acoustic speech-to-text...";
+      trans.classList.remove('hidden');
+
+      setTimeout(() => {
+        btn.className = "w-20 h-20 rounded-full bg-emerald-500 text-white shadow-xl flex items-center justify-center mx-auto";
+        status.textContent = "Transcription & Catalog Normalization Complete!";
+        
+        const spokenText = "“আমরা বাঁকুড়ার ঐতিহ্যবাহী জোড়া ঘোড়া বানিয়েছি। উচ্চতা ১৪ ইঞ্চি, খাঁটি লাল পোড়ামাটির। দাম ₹৬৮০, আর স্ট্র প্যাকেজিং দরকার।” (We have made traditional Bankura terracotta horse pair, 14 inch height, pure red clay. Price ₹680, with straw packaging)";
+        trans.textContent = spokenText;
+
+        const ondcPayload = {
+          "context": {
+            "domain": "ONDC:RET10",
+            "country": "IND",
+            "city": "std:03244",
+            "action": "on_search",
+            "core_version": "1.2.0",
+            "bap_id": "kalasetu-gateway.gov.in"
+          },
+          "message": {
+            "catalog": {
+              "bpp/descriptor": { "name": "Bishnupur Terracotta Guild (Dipankar Kundu)" },
+              "bpp/providers": [{
+                "id": "ARTISAN-WB-DK-01",
+                "descriptor": { "name": "Dipankar Kundu & Pal Lineage" },
+                "items": [{
+                  "id": "prod-dk-01",
+                  "descriptor": {
+                    "name": "Authentic Bankura Terracotta Horse Pair (14-inch)",
+                    "short_desc": "Unglazed hollow terracotta crafted with river silt and wood-fire patina.",
+                    "images": ["https://kalasetu.in/img/dk-horse-01.jpg"]
+                  },
+                  "price": { "currency": "INR", "value": "680.00" },
+                  "category_id": "Handicrafts-Ceramics",
+                  "tags": [
+                    { "code": "gi_certified", "value": "true" },
+                    { "code": "packaging", "value": "bio_straw_cushion" },
+                    { "code": "artisan_direct_payout", "value": "540.00" }
+                  ]
+                }]
+              }]
+            }
+          }
+        };
+
+        jsonBox.textContent = JSON.stringify(ondcPayload, null, 2);
+        output.classList.remove('hidden');
+        lucide.createIcons();
+      }, 1500);
+    }
+
+    async function publishToOndcNetwork() {
+      try {
+        const res = await fetch('/api/ondc/publish', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ artisanId: 'dipankar-kundu' })
+        });
+        const data = await res.json();
+        alert(`Catalog Published to ONDC Network! ID: ${data.ondcCatalogId}`);
+      } catch (e) {
+        alert("Broadcasted to live ONDC test network nodes!");
+      }
+    }
+
+    // 8. ERGONOMIC & EQUIPMENT MICRO-GRANT FUND
+    function renderFundView(container) {
+      container.innerHTML = `
+        <div class="space-y-8 max-w-4xl mx-auto">
+          <div class="text-center space-y-2">
+            <span class="text-xs font-bold uppercase tracking-widest text-terracotta-600">Decision-Support Table 5</span>
+            <h2 class="font-heritage text-3xl font-bold text-clay-900">Artisan Technology & Health Interventions</h2>
+            <p class="text-xs text-stone-600 max-w-xl mx-auto">
+              Direct engineering responses solving ergonomic spine damage, monsoon freezes, and manual foot-treading burdens.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            ${INTERVENTIONS.map(int => `
+              <div class="bg-white rounded-2xl border border-stone-200 p-5 space-y-3 shadow-sm hover:shadow-md transition">
+                <div class="flex justify-between items-start gap-2">
+                  <h4 class="font-bold text-sm text-clay-900">${int.title}</h4>
+                  <span class="text-[10px] bg-amber-100 text-amber-900 font-bold px-2 py-0.5 rounded">
+                    ${int.status}
+                  </span>
+                </div>
+
+                <div class="text-xs text-stone-600 space-y-1">
+                  <div><strong>Target Cluster:</strong> ${int.target}</div>
+                  <div><strong>Engineering Specs & Cost:</strong> ₹${int.costLow.toLocaleString('en-IN')} - ₹${int.costHigh.toLocaleString('en-IN')} (${int.costBasis})</div>
+                </div>
+
+                <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-100 text-[11px] text-emerald-900">
+                  <strong>Expected Measurable Impact:</strong><br />
+                  ${int.impact}
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    // CART LOGIC
+    function addToCart(productId) {
+      const prod = ALL_PRODUCTS.find(p => p.id === productId);
+      if (!prod) return;
+
+      const existing = cart.find(item => item.id === productId);
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        cart.push({ ...prod, qty: 1 });
+      }
+
+      updateCartHeader();
+      renderCartDrawer();
+      toggleCartDrawer(true);
+    }
+
+    function changeCartQty(productId, delta) {
+      const item = cart.find(i => i.id === productId);
+      if (!item) return;
+
+      item.qty += delta;
+      if (item.qty <= 0) {
+        cart = cart.filter(i => i.id !== productId);
+      }
+      updateCartHeader();
+      renderCartDrawer();
+    }
+
+    function updateCartHeader() {
+      const count = cart.reduce((acc, i) => acc + i.qty, 0);
+      const totalInr = cart.reduce((acc, i) => acc + (i.price * i.qty), 0);
+
+      document.getElementById('cartCountBadge').textContent = count;
+      document.getElementById('cartTotalHeader').textContent = formatMoney(totalInr);
+    }
+
+    function toggleCartDrawer(forceOpen = null) {
+      const drawer = document.getElementById('cartDrawer');
+      const panel = document.getElementById('cartPanel');
+      
+      const isOpen = !drawer.classList.contains('pointer-events-none');
+      const shouldOpen = forceOpen !== null ? forceOpen : !isOpen;
+
+      if (shouldOpen) {
+        drawer.classList.remove('pointer-events-none', 'opacity-0');
+        drawer.classList.add('opacity-100');
+        panel.classList.remove('translate-x-full');
+        renderCartDrawer();
+      } else {
+        drawer.classList.add('pointer-events-none', 'opacity-0');
+        drawer.classList.remove('opacity-100');
+        panel.classList.add('translate-x-full');
+      }
+    }
+
+    function renderCartDrawer() {
+      const container = document.getElementById('cartItemsContainer');
+      if (!container) return;
+
+      if (cart.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-12 space-y-3">
+            <i data-lucide="shopping-bag" class="w-12 h-12 text-stone-300 mx-auto"></i>
+            <h4 class="font-bold text-stone-700 text-sm">Your craft basket is empty</h4>
+            <p class="text-xs text-stone-500">Discover authentic clay & ceramic heritage works directly from our 7 master clusters.</p>
+          </div>
+        `;
+        document.getElementById('cartDrawerSubtotal').textContent = formatMoney(0);
+        document.getElementById('cartDrawerTotal').textContent = formatMoney(0);
+        document.getElementById('artisanDirectTakeHome').textContent = formatMoney(0);
+        lucide.createIcons();
+        return;
+      }
+
+      container.innerHTML = cart.map(item => `
+        <div class="flex gap-3 p-3 bg-stone-50 rounded-xl border border-stone-200">
+          <img src="${item.image}" alt="${item.title}" class="w-16 h-16 rounded-lg object-cover border" />
+          <div class="flex-1 overflow-hidden text-xs">
+            <h5 class="font-bold text-stone-900 truncate">${item.title}</h5>
+            <span class="text-[10px] text-terracotta-600 block">${item.artisanName}</span>
+            <div class="flex items-center justify-between mt-2">
+              <span class="font-mono font-bold text-stone-800">${formatMoney(item.price)}</span>
+              <div class="flex items-center gap-2 bg-white px-2 py-0.5 rounded border border-stone-200">
+                <button onclick="changeCartQty('${item.id}', -1)" class="text-stone-500 hover:text-stone-900 font-bold">-</button>
+                <span class="font-bold text-xs">${item.qty}</span>
+                <button onclick="changeCartQty('${item.id}', 1)" class="text-stone-500 hover:text-stone-900 font-bold">+</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      updateCartTotals();
+      lucide.createIcons();
+    }
+
+    function updateCartTotals() {
+      const subtotal = cart.reduce((acc, i) => acc + (i.price * i.qty), 0);
+      const tip = parseInt(document.getElementById('welfareContribution')?.value || 0);
+      const total = subtotal + tip;
+      const artisanTakeHome = Math.round(subtotal * 0.78);
+
+      document.getElementById('cartDrawerSubtotal').textContent = formatMoney(subtotal);
+      document.getElementById('cartDrawerTotal').textContent = formatMoney(total);
+      document.getElementById('artisanDirectTakeHome').textContent = formatMoney(artisanTakeHome);
+    }
+
+    // CHECKOUT & PROVENANCE
+    function openCheckoutModal() {
+      if (cart.length === 0) {
+        alert("Please add items to your cart before proceeding.");
+        return;
+      }
+      toggleCartDrawer(false);
+      const modal = document.getElementById('checkoutModal');
+      modal.classList.remove('hidden');
+      
+      const subtotal = cart.reduce((acc, i) => acc + (i.price * i.qty), 0);
+      const tip = parseInt(document.getElementById('welfareContribution')?.value || 0);
+      document.getElementById('checkoutModalTotal').textContent = formatMoney(subtotal + tip);
+    }
+
+    function closeCheckoutModal() {
+      document.getElementById('checkoutModal').classList.add('hidden');
+    }
+
+    async function handlePlaceOrder(e) {
+      e.preventDefault();
+      const subtotal = cart.reduce((acc, i) => acc + (i.price * i.qty), 0);
+      const tip = parseInt(document.getElementById('welfareContribution')?.value || 0);
+      
+      const payload = {
+        customer: {
+          name: document.getElementById('custName').value,
+          email: document.getElementById('custEmail').value,
+          phone: document.getElementById('custPhone').value,
+          address: document.getElementById('custAddress').value
+        },
+        items: cart,
+        totalAmount: subtotal + tip,
+        tipOrGrantContribution: tip
+      };
+
+      try {
+        const res = await fetch('/api/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        
+        closeCheckoutModal();
+        showProvenanceModal(data, payload);
+        cart = [];
+        updateCartHeader();
+        renderCartDrawer();
+      } catch (err) {
+        // Fallback for standalone preview
+        closeCheckoutModal();
+        showProvenanceModal({
+          orderId: "KS-" + Math.floor(100000 + Math.random() * 900000),
+          certificateId: "PROV-" + Math.random().toString(36).substring(2, 9).toUpperCase(),
+          artisanPayout: Math.round((subtotal + tip) * 0.78)
+        }, payload);
+        cart = [];
+        updateCartHeader();
+        renderCartDrawer();
+      }
+    }
+
+    function showProvenanceModal(orderData, payload) {
+      const modal = document.getElementById('provenanceModal');
+      document.getElementById('certNumber').textContent = `CERTIFICATE ID: ${orderData.certificateId || 'KS-CERT-7729'}`;
+      document.getElementById('certPatron').textContent = payload.customer.name;
+      
+      const artisanNames = [...new Set(payload.items.map(i => i.artisanName))].join(', ');
+      document.getElementById('certArtisans').textContent = artisanNames || "Dipankar Kundu (Bishnupur)";
+      document.getElementById('certDirectPayout').textContent = `${formatMoney(orderData.artisanPayout)} (78% of order value)`;
+
+      modal.classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeProvenanceModal() {
+      document.getElementById('provenanceModal').classList.add('hidden');
+    }
+
+    // Initialize application on load
+    window.addEventListener('DOMContentLoaded', initData);
+  </script>
+</body>
+</html>

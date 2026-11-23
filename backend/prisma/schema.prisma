@@ -1,0 +1,355 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// -------------------------------------------------------------
+// USER & AUTHENTICATION
+// Roles: "CUSTOMER" | "ARTISAN" | "ADMIN"
+// -------------------------------------------------------------
+model User {
+  id               String           @id @default(uuid())
+  email            String?          @unique
+  phoneNumber      String           @unique
+  passwordHash     String?          // Nullable for OTP-only artisans
+  fullName         String
+  role             String           @default("CUSTOMER") // CUSTOMER, ARTISAN, ADMIN
+  preferredLang    String           @default("en")       // en, hi, bn, gu
+  isPhoneVerified  Boolean          @default(false)
+  avatarUrl        String?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  artisanProfile   ArtisanProfile?
+  orders           Order[]
+  reviews          Review[]
+  commissions      CustomCommission[]
+  refreshTokens    RefreshToken[]
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+// -------------------------------------------------------------
+// ARTISAN MASTER PROFILES & CLUSTERS
+// -------------------------------------------------------------
+model CraftCluster {
+  id                 String           @id @default(uuid())
+  slug               String           @unique
+  name               String           // e.g. "Bishnupur Terracotta", "Jaipur Blue Pottery"
+  state              String           // West Bengal, Rajasthan, Gujarat, UP
+  district           String           // Bankura, Jaipur, Kutch, Azamgarh
+  materialsUsed      String           // JSON stringified array of materials
+  isGiTagged         Boolean          @default(false)
+  giRegNumber        String?          // e.g. "GI-Cert #RJ-12-BP"
+  typicalBreakagePct Float            @default(15.0)
+  description        String
+  heroImageUrl       String?
+  artisans           ArtisanProfile[]
+  products           Product[]
+}
+
+model ArtisanProfile {
+  id                 String             @id @default(uuid())
+  userId             String             @unique
+  user               User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  clusterId          String
+  cluster            CraftCluster       @relation(fields: [clusterId], references: [id])
+  
+  brandName          String             // Studio / Workshop name
+  artisanLineage     String?            // e.g. "5th Generation Pal Lineage Potter"
+  storyNarrative     String             // Rich cultural heritage story
+  voiceIntroAudioUrl String?            // Vernacular recording of artisan
+  workshopAddress    String
+  bankAccountNumber  String?            // Masked for direct payout display
+  bankIfscCode       String?
+  upiId              String?
+  
+  verificationStatus String             @default("PENDING") // PENDING, UNDER_REVIEW, VERIFIED, REJECTED
+  verificationNotes  String?
+  giArtisanCardUrl   String?
+  
+  experienceYears    Int                @default(10)
+  workshopSize       Int                @default(1)
+  hourlyEarningBase  Float              @default(15.0) // Fieldwork baseline (e.g. ₹13.10)
+  
+  products           Product[]
+  commissions        CustomCommission[]
+  payouts            PayoutRecord[]
+  voiceLogs          VoiceOnboardingLog[]
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+}
+
+// -------------------------------------------------------------
+// PRODUCTS & MULTIMODAL METADATA
+// -------------------------------------------------------------
+model Product {
+  id                   String          @id @default(uuid())
+  artisanId            String
+  artisan              ArtisanProfile  @relation(fields: [artisanId], references: [id], onDelete: Cascade)
+  clusterId            String
+  cluster              CraftCluster    @relation(fields: [clusterId], references: [id])
+  
+  title                String
+  slug                 String          @unique
+  vernacularTitles     String?         // JSON string: { hi, bn, gu }
+  description          String
+  vernacularDescs      String?         // JSON string: { hi, bn, gu }
+  
+  category             String          // "Home Decor", "Serveware", "Sculpture", "Wall Decor", "Spiritual"
+  subCategory          String?
+  tags                 String          // JSON string array: ["terracotta", "GI-tagged", "unglazed"]
+  
+  retailPrice          Float           // Consumer retail price (₹)
+  artisanBasePrice     Float           // Direct amount paid to artisan (~82-88%)
+  marketBenchmarkPrice Float?          // What commercial stores charge (e.g. ₹3,500 vs ₹2,000)
+  
+  stockQuantity        Int             @default(1)
+  isMadeToOrder        Boolean         @default(false)
+  leadTimeDays         Int             @default(3)
+  
+  // Dimensions & Logistics
+  lengthCm             Float           @default(15.0)
+  widthCm              Float           @default(15.0)
+  heightCm             Float           @default(20.0)
+  weightGrams          Float           @default(800.0)
+  volumetricWeightGrams Float?
+  
+  // SafeTransit & Fragility: LOW, MEDIUM, HIGH, EXTREME
+  fragilityClass       String          @default("HIGH")
+  safeTransitCertified Boolean         @default(true)
+  packagingTypeId      String?
+  packagingSpec        FragilitySpec?  @relation(fields: [packagingTypeId], references: [id])
+  
+  // Status: DRAFT, PENDING_APPROVAL, ACTIVE, INACTIVE
+  status               String          @default("ACTIVE")
+  aiGeneratedTags      Boolean         @default(false)
+  aiModerationNotes    String?
+
+  images               ProductImage[]
+  orderItems           OrderItem[]
+  reviews              Review[]
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+}
+
+model ProductImage {
+  id         String   @id @default(uuid())
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  imageUrl   String
+  isPrimary  Boolean  @default(false)
+  altText    String?
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+}
+
+model FragilitySpec {
+  id                    String    @id @default(uuid())
+  code                  String    @unique // "BIO_STRAW_TERRACOTTA_V1"
+  name                  String    // "Moulded Bio-Composite Straw Shock Insert"
+  fragilityClass        String    // LOW, MEDIUM, HIGH, EXTREME
+  packagingInstructions String    // Step-by-step instructions
+  cushioningMaterial    String    // "Paddy straw + natural tapioca starch binder"
+  dropTestRatingFeet    Float     @default(4.0)
+  boxCostInr            Float     @default(12.0)
+  products              Product[]
+}
+
+// -------------------------------------------------------------
+// ORDERS, TRANSACTIONS & FAIR-TRADE TRANSPARENCY
+// -------------------------------------------------------------
+model Order {
+  id                   String              @id @default(uuid())
+  orderNumber          String              @unique // "KS-2026-XXXX"
+  customerId           String
+  customer             User                @relation(fields: [customerId], references: [id])
+  
+  totalAmount          Float
+  artisanShareTotal    Float
+  platformFeeTotal     Float
+  packagingFeeTotal    Float
+  shippingFeeTotal     Float
+  taxTotal             Float               @default(0.0)
+  
+  shippingAddress      String              // JSON string of address details
+  billingAddress       String?             // JSON string
+  
+  // Status: PENDING_PAYMENT, PAID, PROCESSING, PACKED_SAFE_TRANSIT, SHIPPED, DELIVERED, CANCELLED
+  status               String              @default("PENDING_PAYMENT")
+  safeTransitGuarantee Boolean             @default(true)
+  
+  payment              PaymentTransaction?
+  shipment             ShipmentRecord?
+  items                OrderItem[]
+  auditLogs            FairTradeAuditLog[]
+  
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+}
+
+model OrderItem {
+  id               String         @id @default(uuid())
+  orderId          String
+  order            Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId        String
+  product          Product        @relation(fields: [productId], references: [id])
+  artisanId        String
+  
+  quantity         Int            @default(1)
+  unitPrice        Float
+  artisanUnitShare Float
+  subtotal         Float
+  
+  packagingStatus  String         @default("PENDING") // PENDING, PACKED_IN_BIO_STRAW, INSPECTED
+  breakageClaimed  Boolean        @default(false)
+}
+
+model PaymentTransaction {
+  id                  String        @id @default(uuid())
+  orderId             String        @unique
+  order               Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  
+  razorpayOrderId     String        @unique
+  razorpayPaymentId   String?       @unique
+  razorpaySignature   String?
+  
+  amount              Float
+  currency            String        @default("INR")
+  status              String        @default("CREATED") // CREATED, AUTHORIZED, CAPTURED, FAILED
+  paymentMethod       String?       // "upi", "card", "netbanking"
+  rawWebhookPayload   String?       // JSON string
+  
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+}
+
+model ShipmentRecord {
+  id                String       @id @default(uuid())
+  orderId           String       @unique
+  order             Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  
+  trackingNumber    String?      @unique
+  carrierName       String       @default("SafeTransit Fragile Express")
+  shippingStatus    String       @default("ORDER_CONFIRMED")
+  fragilityHandling Boolean      @default(true)
+  
+  estimatedDelivery DateTime?
+  actualDelivery    DateTime?
+  originPincode     String
+  destPincode       String
+  
+  trackingTimeline  String       // JSON string array of timeline steps
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+}
+
+model FairTradeAuditLog {
+  id                  String       @id @default(uuid())
+  orderId             String
+  order               Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  artisanId           String
+  
+  grossRetail         Float
+  artisanDirectPay    Float        // ~85%
+  materialSubsidy     Float        @default(0)
+  packagingReserve    Float        // Bio-straw fund
+  breakagePoolReserve Float        // SafeTransit replacement insurance pool
+  platformTechFee     Float        // Operating overhead ~8%
+  timestamp           DateTime     @default(now())
+}
+
+// -------------------------------------------------------------
+// CUSTOM COMMISSIONS & BESPOKE ESCROW
+// -------------------------------------------------------------
+model CustomCommission {
+  id                 String             @id @default(uuid())
+  commissionNumber   String             @unique // "KS-COMM-XXXX"
+  customerId         String
+  customer           User               @relation(fields: [customerId], references: [id])
+  artisanId          String
+  artisan            ArtisanProfile     @relation(fields: [artisanId], references: [id])
+  
+  title              String             // e.g. "22-ft Monumental Durga Armature"
+  projectScope       String             // Detailed requirements & medium
+  patronBudget       Float
+  agreedPrice        Float?
+  
+  status             String             @default("INQUIRY") // INQUIRY, PROPOSAL_SENT, ESCROW_LOCKED, IN_PROGRESS, PROTOTYPE_REVIEW, COMPLETED
+  digitalIpHash      String?            // SHA-256 copyright timestamp protecting master molds
+  milestones         CommissionMilestone[]
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+}
+
+model CommissionMilestone {
+  id                 String            @id @default(uuid())
+  commissionId       String
+  commission         CustomCommission  @relation(fields: [commissionId], references: [id], onDelete: Cascade)
+  
+  title              String            // Stage 1: Clay & Armature (25%)
+  percentage         Float             // 25.0, 35.0, 40.0
+  amount             Float
+  status             String            @default("PENDING") // PENDING, ESCROW_HELD, APPROVED, DISBURSED
+  proofPhotoUrl      String?           // 360 photo of clay model / prototype
+  patronApproved     Boolean           @default(false)
+  disbursedAt        DateTime?
+  createdAt          DateTime          @default(now())
+}
+
+// -------------------------------------------------------------
+// VERNACULAR VOICE & MULTIMODAL AI LOGS
+// -------------------------------------------------------------
+model VoiceOnboardingLog {
+  id               String         @id @default(uuid())
+  artisanId        String
+  artisan          ArtisanProfile @relation(fields: [artisanId], references: [id], onDelete: Cascade)
+  
+  spokenLanguage   String         // bn, hi, gu
+  audioSnippetUrl  String?
+  rawTranscript    String
+  extractedJson    String         // JSON string
+  englishTitle     String?
+  englishDesc      String?
+  createdAt        DateTime       @default(now())
+}
+
+model Review {
+  id               String   @id @default(uuid())
+  productId        String
+  product          Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  userId           String
+  user             User     @relation(fields: [userId], references: [id])
+  
+  rating           Int      // 1-5
+  headline         String?
+  comment          String
+  artisanPraise    String?  // Direct message sent to artisan
+  verifiedPurchase Boolean  @default(true)
+  createdAt        DateTime @default(now())
+}
+
+model PayoutRecord {
+  id             String         @id @default(uuid())
+  artisanId      String
+  artisan        ArtisanProfile @relation(fields: [artisanId], references: [id], onDelete: Cascade)
+  
+  amount         Float
+  currency       String         @default("INR")
+  payoutMethod   String         // UPI, NEFT
+  transferRef    String?        // UTR Number
+  status         String         @default("COMPLETED") // PROCESSING, COMPLETED, FAILED
+  disbursedAt    DateTime?
+  createdAt      DateTime       @default(now())
+}
