@@ -19,6 +19,7 @@ export const CartDrawer: React.FC<Props> = ({ onProceedToCheckout }) => {
 
   if (!isCartOpen) return null;
 
+  const hasSamples = items.some((item) => item.product.isDemo);
   const artisanSharePct = subtotal > 0 ? Math.round((totalArtisanShare / subtotal) * 100) : 85;
 
   return (
@@ -77,16 +78,17 @@ export const CartDrawer: React.FC<Props> = ({ onProceedToCheckout }) => {
                       {item.product.title}
                     </h4>
                     <div className="text-stone-500 text-[11px]">
-                      ₹{item.product.retailPrice} each
+                      ₹{item.product.retailPrice} each {item.product.isDemo && '· Sample listing'}
                     </div>
                     <div className="text-emerald-700 font-semibold text-[11px] flex items-center">
                       <CheckCircle2 className="w-3 h-3 mr-1" />
-                      ₹{item.product.artisanBasePrice * item.quantity} goes directly to artisan
+                      ₹{item.product.artisanBasePrice * item.quantity} {item.product.isDemo ? 'illustrative artisan share' : 'goes directly to artisan'}
                     </div>
 
                     <div className="flex items-center justify-between pt-1">
                       <div className="flex items-center space-x-1.5 bg-white border border-stone-200 rounded-lg p-0.5">
                         <button
+                          aria-label={`Decrease quantity of ${item.product.title}`}
                           onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
                           className="p-1 hover:bg-stone-100 rounded text-stone-600"
                         >
@@ -94,6 +96,8 @@ export const CartDrawer: React.FC<Props> = ({ onProceedToCheckout }) => {
                         </button>
                         <span className="px-1.5 font-bold text-xs">{item.quantity}</span>
                         <button
+                          aria-label={`Increase quantity of ${item.product.title}`}
+                          disabled={!item.product.isMadeToOrder && item.quantity >= item.product.stockQuantity}
                           onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
                           className="p-1 hover:bg-stone-100 rounded text-stone-600"
                         >
@@ -102,6 +106,7 @@ export const CartDrawer: React.FC<Props> = ({ onProceedToCheckout }) => {
                       </div>
 
                       <button
+                        aria-label={`Remove ${item.product.title}`}
                         onClick={() => removeItem(item.product.id)}
                         className="text-stone-400 hover:text-red-600 p-1 transition-colors"
                       >
@@ -121,7 +126,7 @@ export const CartDrawer: React.FC<Props> = ({ onProceedToCheckout }) => {
               <div className="bg-emerald-100/70 border border-emerald-300 rounded-xl p-3 flex items-center justify-between text-xs text-emerald-950 font-medium">
                 <div className="flex items-center space-x-1.5">
                   <CheckCircle2 className="w-4 h-4 text-emerald-700 shrink-0" />
-                  <span>Artisan Direct Payout:</span>
+                  <span>{hasSamples ? 'Illustrative artisan share' : 'Artisan direct payout'}</span>
                 </div>
                 <span className="font-bold text-emerald-800 text-sm">
                   ₹{totalArtisanShare} ({artisanSharePct}%)
@@ -129,12 +134,12 @@ export const CartDrawer: React.FC<Props> = ({ onProceedToCheckout }) => {
               </div>
 
               {/* SafeTransit Guarantee */}
-              <div className="flex items-center space-x-2 text-[11px] text-amber-800 bg-amber-50/80 p-2.5 rounded-lg border border-amber-200">
+              {!hasSamples && <div className="flex items-center space-x-2 text-[11px] text-amber-800 bg-amber-50/80 p-2.5 rounded-lg border border-amber-200">
                 <ShieldCheck className="w-4 h-4 text-amber-600 shrink-0" />
                 <span>
                   SafeTransit™ Bio-Composite Packaging included. 100% free replacement against damage.
                 </span>
-              </div>
+              </div>}
 
               <div className="flex justify-between items-baseline pt-1">
                 <span className="text-xs font-semibold text-stone-600">Subtotal</span>
@@ -143,12 +148,14 @@ export const CartDrawer: React.FC<Props> = ({ onProceedToCheckout }) => {
                 </span>
               </div>
 
+              {hasSamples && <p className="text-sm text-stone-600">Sample listings are for preview. Remove them to check out with available listings.</p>}
               <button
+                disabled={hasSamples}
                 onClick={() => {
                   setIsCartOpen(false);
                   onProceedToCheckout();
                 }}
-                className="w-full py-3.5 rounded-xl bg-terracotta-600 hover:bg-terracotta-700 text-white font-bold text-sm shadow-md transition-all flex items-center justify-center space-x-2 terracotta-glow"
+                className="disabled:opacity-50 w-full py-3.5 rounded-xl bg-terracotta-600 hover:bg-terracotta-700 text-white font-bold text-sm shadow-md transition-all flex items-center justify-center space-x-2 terracotta-glow"
               >
                 <span>Proceed to SafeTransit™ Checkout</span>
                 <ArrowRight className="w-4 h-4" />

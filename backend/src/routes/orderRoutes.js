@@ -12,7 +12,7 @@ router.post('/checkout', authenticate, async (req, res, next) => {
   try {
     const { items, shippingAddress } = req.body;
 
-    if (!items || !items.length) {
+    if (!Array.isArray(items) || !items.length) {
       return res.status(400).json({ success: false, error: 'Cart is empty. Provide items to checkout.' });
     }
 
@@ -20,10 +20,20 @@ router.post('/checkout', authenticate, async (req, res, next) => {
       return res.status(400).json({ success: false, error: 'Complete shipping address is required.' });
     }
 
-    // Fetch products
-    const productIds = items.map((i) => i.productId);
+    const quantities = new Map();
+    for (const item of items) {
+      const raw = item?.quantity ?? 1;
+      const quantity = typeof raw === 'number' || (typeof raw === 'string' && /^\d+$/.test(raw)) ? Number(raw) : NaN;
+      const total = (quantities.get(item?.productId) || 0) + quantity;
+      if (typeof item?.productId !== 'string' || !Number.isSafeInteger(quantity) || quantity < 1 || total > 2147483647) {
+        return res.status(400).json({ success: false, error: 'Each item requires a product and a positive whole quantity.' });
+      }
+      quantities.set(item.productId, total);
+    }
+
+    const productIds = [...quantities.keys()];
     const dbProducts = await prisma.product.findMany({
-      where: { id: { in: productIds } },
+      where: { id: { in: productIds }, status: 'ACTIVE' },
       include: { packagingSpec: true },
     });
 
@@ -38,9 +48,11 @@ router.post('/checkout', authenticate, async (req, res, next) => {
 
     const orderItemsData = [];
 
-    for (const item of items) {
-      const prod = dbProducts.find((p) => p.id === item.productId);
-      const qty = parseInt(item.quantity || 1, 10);
+    for (const prod of dbProducts) {
+      const qty = quantities.get(prod.id);
+      if (!prod.isMadeToOrder && qty > prod.stockQuantity) {
+        return res.status(409).json({ success: false, error: `Only ${prod.stockQuantity} available for ${prod.title}.` });
+      }
       const lineTotal = prod.retailPrice * qty;
       const artisanLineShare = prod.artisanBasePrice * qty;
 

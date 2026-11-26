@@ -7,7 +7,7 @@ function getToken(): string | null {
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const token = getToken();
   const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
+    ...(options.body instanceof FormData ? {} : { 'Content-Type': 'application/json' }),
     ...(options.headers as Record<string, string>),
   };
 
@@ -53,11 +53,20 @@ export const api = {
   // Products
   getProducts: (params: Record<string, any> = {}) => {
     const qs = new URLSearchParams(params as any).toString();
-    return request<{ success: boolean; products: any[]; totalCount: number }>(`/products${qs ? `?${qs}` : ''}`);
+    return request<{ success: boolean; products: any[]; totalCount: number; totalPages: number }>(`/products${qs ? `?${qs}` : ''}`);
   },
   getProduct: (idOrSlug: string) => request<{ success: boolean; product: any }>(`/products/${idOrSlug}`),
   createProduct: (body: any) => request<any>('/products', { method: 'POST', body: JSON.stringify(body) }),
   addReview: (productId: string, body: any) => request<any>(`/products/${productId}/reviews`, { method: 'POST', body: JSON.stringify(body) }),
+
+  updateProduct: (id: string, body: object) => request<any>(`/products/${id}`, { method: 'PATCH', body: JSON.stringify(body) }),
+  updatePackaging: (id: string, packagingStatus: string) =>
+    request<any>(`/artisans/my/orders/${id}/packaging`, { method: 'PATCH', body: JSON.stringify({ packagingStatus }) }),
+  uploadMedia: (file: File) => {
+    const body = new FormData();
+    body.append('file', file);
+    return request<{ url: string }>('/media', { method: 'POST', body });
+  },
 
   // AI Multimodal
   multimodalOnboard: (body: { voiceTranscript: string; spokenLang: string; imageMeta?: any }) =>

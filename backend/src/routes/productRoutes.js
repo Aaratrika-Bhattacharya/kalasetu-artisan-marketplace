@@ -1,9 +1,37 @@
 const express = require('express');
+const { randomUUID } = require('node:crypto');
 const router = express.Router();
 const prisma = require('../prismaClient');
 const { authenticate, requireRole, optionalAuth } = require('../middleware/auth');
 const logisticsService = require('../services/logisticsService');
 const fairTradeService = require('../services/fairTradeService');
+const { readCraftDetails, writeCraftDetails, mediaUrl } = require('../services/productDetails');
+
+async function getPackagingFields(cluster, listing, details) {
+  const assessment = logisticsService.assessFragility({
+    craftType: details?.artForm || cluster.name,
+    category: listing.category,
+    dimensions: {
+      lengthCm: listing.lengthCm, widthCm: listing.widthCm,
+      heightCm: listing.heightCm, weightGrams: listing.weightGrams,
+    },
+    materials: details?.materials?.length ? details.materials : JSON.parse(cluster.materialsUsed || '[]'),
+  });
+  const spec = await prisma.fragilitySpec.upsert({
+    where: { code: assessment.packagingCode },
+    update: {},
+    create: {
+      code: assessment.packagingCode,
+      name: assessment.packagingCode.replace(/_/g, ' '),
+      fragilityClass: assessment.fragilityClass,
+      packagingInstructions: JSON.stringify(assessment.packagingInstructions),
+      cushioningMaterial: 'Bio-Composite Shock Cushioning',
+      dropTestRatingFeet: assessment.dropRatingFeet,
+      boxCostInr: assessment.boxCostInr,
+    },
+  });
+  return { fragilityClass: assessment.fragilityClass, packagingTypeId: spec.id };
+}
 
 /**
  * List products with multi-facet filters
@@ -68,7 +96,7 @@ router.get('/', optionalAuth, async (req, res, next) => {
           packagingSpec: true,
           _count: { select: { reviews: true } },
         },
-        orderBy: { createdAt: 'desc' },
+        orderBy: [{ createdAt: 'desc' }, { id: 'asc' }],
       }),
     ]);
 
@@ -86,6 +114,7 @@ router.get('/', optionalAuth, async (req, res, next) => {
         vernacularDescs: p.vernacularDescs ? JSON.parse(p.vernacularDescs) : null,
         category: p.category,
         subCategory: p.subCategory,
+        craftDetails: readCraftDetails(p.craftDetails),
         tags: JSON.parse(p.tags || '[]'),
         retailPrice: p.retailPrice,
         artisanBasePrice: p.artisanBasePrice,
@@ -108,8 +137,11 @@ router.get('/', optionalAuth, async (req, res, next) => {
           id: p.cluster.id,
           name: p.cluster.name,
           state: p.cluster.state,
+          district: p.cluster.district,
+          description: p.cluster.description,
           isGiTagged: p.cluster.isGiTagged,
           giRegNumber: p.cluster.giRegNumber,
+          materialsUsed: JSON.parse(p.cluster.materialsUsed || '[]'),
         },
         artisan: {
           id: p.artisan.id,
@@ -143,6 +175,7 @@ router.get('/:slugOrId', optionalAuth, async (req, res, next) => {
 
     const product = await prisma.product.findFirst({
       where: {
+        status: 'ACTIVE',
         OR: [{ id: slugOrId }, { slug: slugOrId }],
       },
       include: {
@@ -178,6 +211,16 @@ router.get('/:slugOrId', optionalAuth, async (req, res, next) => {
       success: true,
       product: {
         ...product,
+        craftDetails: readCraftDetails(product.craftDetails),
+        dimensions: { lengthCm: product.lengthCm, widthCm: product.widthCm, heightCm: product.heightCm, weightGrams: product.weightGrams },
+        artisan: {
+          id: product.artisan.id,
+          artisanName: product.artisan.user.fullName,
+          avatarUrl: product.artisan.user.avatarUrl,
+          brandName: product.artisan.brandName,
+          artisanLineage: product.artisan.artisanLineage,
+        },
+        cluster: { ...product.cluster, materialsUsed: JSON.parse(product.cluster.materialsUsed || '[]') },
         tags: JSON.parse(product.tags || '[]'),
         vernacularTitles: product.vernacularTitles ? JSON.parse(product.vernacularTitles) : null,
         vernacularDescs: product.vernacularDescs ? JSON.parse(product.vernacularDescs) : null,
@@ -215,6 +258,7 @@ router.post('/', authenticate, requireRole(['ARTISAN', 'ADMIN']), async (req, re
       heightCm = 20,
       weightGrams = 800,
       imageUrls = [],
+      craftDetails,
     } = req.body;
 
     const profile = await prisma.artisanProfile.findUnique({
@@ -226,68 +270,36 @@ router.post('/', authenticate, requireRole(['ARTISAN', 'ADMIN']), async (req, re
       return res.status(403).json({ success: false, error: 'Only registered artisans can list products.' });
     }
 
-    // Auto-assess fragility via logistics engine
-    const fragilityAssessment = logisticsService.assessFragility({
-      craftType: profile.cluster.name,
-      category,
-      dimensions: { lengthCm, widthCm, heightCm, weightGrams },
-      materials: JSON.parse(profile.cluster.materialsUsed || '[]'),
-    });
+    const listing = validateListing({ title, description, category: category || 'Home Decor',
+      retailPrice, artisanBasePrice: artisanBasePrice ?? Math.round(Number(retailPrice) * 0.85),
+      stockQuantity, leadTimeDays, lengthCm, widthCm, heightCm, weightGrams, imageUrls, craftDetails });
+    if (typeof isMadeToOrder !== 'boolean') return res.status(400).json({ error: 'Invalid made-to-order flag.' });
 
-    // Find or link PackagingSpec
-    let packagingSpec = await prisma.fragilitySpec.findUnique({
-      where: { code: fragilityAssessment.packagingCode },
-    });
-
-    if (!packagingSpec) {
-      packagingSpec = await prisma.fragilitySpec.create({
-        data: {
-          code: fragilityAssessment.packagingCode,
-          name: fragilityAssessment.packagingCode.replace(/_/g, ' '),
-          fragilityClass: fragilityAssessment.fragilityClass,
-          packagingInstructions: JSON.stringify(fragilityAssessment.packagingInstructions),
-          cushioningMaterial: 'Bio-Composite Shock Cushioning',
-          dropTestRatingFeet: fragilityAssessment.dropRatingFeet,
-          boxCostInr: fragilityAssessment.boxCostInr,
-        },
-      });
-    }
+    const packaging = await getPackagingFields(profile.cluster, listing, readCraftDetails(listing.craftDetails));
 
     // Generate unique slug
     const cleanSlug = title
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-|-$/g, '');
-    const slug = `${cleanSlug}-${Math.random().toString(36).substring(2, 7)}`;
+    const slug = `${cleanSlug || 'craft'}-${randomUUID().slice(0, 8)}`;
 
-    const numRetail = parseFloat(retailPrice);
-    const numArtisanBase = artisanBasePrice ? parseFloat(artisanBasePrice) : Math.round(numRetail * 0.85);
+    const numRetail = listing.retailPrice;
 
     const product = await prisma.product.create({
       data: {
         artisanId: profile.id,
         clusterId: profile.clusterId,
-        title,
+        ...listing,
+        ...packaging,
+        safeTransitCertified: true,
         slug,
         vernacularTitles: vernacularTitles ? JSON.stringify(vernacularTitles) : null,
-        description,
         vernacularDescs: vernacularDescs ? JSON.stringify(vernacularDescs) : null,
-        category: category || 'Home Decor',
         subCategory,
         tags: JSON.stringify(Array.isArray(tags) ? tags : [tags]),
-        retailPrice: numRetail,
-        artisanBasePrice: numArtisanBase,
         marketBenchmarkPrice: marketBenchmarkPrice ? parseFloat(marketBenchmarkPrice) : Math.round(numRetail * 1.6),
-        stockQuantity: parseInt(stockQuantity, 10),
-        isMadeToOrder: Boolean(isMadeToOrder),
-        leadTimeDays: parseInt(leadTimeDays, 10),
-        lengthCm: parseFloat(lengthCm),
-        widthCm: parseFloat(widthCm),
-        heightCm: parseFloat(heightCm),
-        weightGrams: parseFloat(weightGrams),
-        fragilityClass: fragilityAssessment.fragilityClass,
-        safeTransitCertified: true,
-        packagingTypeId: packagingSpec.id,
+        isMadeToOrder,
         status: 'ACTIVE',
         images: {
           create: imageUrls.length > 0
@@ -315,6 +327,77 @@ router.post('/', authenticate, requireRole(['ARTISAN', 'ADMIN']), async (req, re
       product,
     });
   } catch (err) {
+    next(err);
+  }
+});
+
+function validateListing(input) {
+  const listing = {};
+  for (const key of ['title', 'description', 'category']) {
+    if (typeof input[key] !== 'string' || !input[key].trim()) {
+      throw Object.assign(new Error(`${key} is required.`), { statusCode: 400 });
+    }
+    listing[key] = input[key].trim();
+  }
+  for (const key of ['retailPrice', 'artisanBasePrice', 'stockQuantity', 'leadTimeDays', 'lengthCm', 'widthCm', 'heightCm', 'weightGrams']) {
+    const raw = input[key];
+    const value = (typeof raw === 'number' || (typeof raw === 'string' && raw.trim())) ? Number(raw) : NaN;
+    const integer = key === 'stockQuantity' || key === 'leadTimeDays';
+    const allowZero = integer || key === 'artisanBasePrice';
+    if (!Number.isFinite(value) || value < 0 || (!allowZero && value === 0) ||
+        (integer && (!Number.isInteger(value) || value > 2147483647))) {
+      throw Object.assign(new Error(`Invalid ${key}.`), { statusCode: 400 });
+    }
+    listing[key] = value;
+  }
+  if (listing.artisanBasePrice > listing.retailPrice) {
+    throw Object.assign(new Error('Artisan earnings cannot exceed the retail price.'), { statusCode: 400 });
+  }
+  if (input.imageUrls !== undefined &&
+      (!Array.isArray(input.imageUrls) || input.imageUrls.length > 10 || !input.imageUrls.every(mediaUrl))) {
+    throw Object.assign(new Error('Use up to 10 uploaded images or HTTP(S) image URLs.'), { statusCode: 400 });
+  }
+  listing.craftDetails = writeCraftDetails(input.craftDetails);
+  return listing;
+}
+
+router.patch('/:id', authenticate, requireRole(['ARTISAN']), async (req, res, next) => {
+  try {
+    const product = await prisma.product.findFirst({
+      where: { id: req.params.id, artisan: { userId: req.user.id } },
+      include: { cluster: true },
+    });
+    if (!product) return res.status(404).json({ error: 'Listing not found.' });
+
+    const { imageUrls, craftDetails, isMadeToOrder = product.isMadeToOrder } = req.body;
+    const priorDetails = readCraftDetails(product.craftDetails);
+    const mergedDetails = craftDetails && typeof craftDetails === 'object' && !Array.isArray(craftDetails)
+      ? { ...priorDetails, ...craftDetails }
+      : craftDetails;
+    if (typeof isMadeToOrder !== 'boolean') return res.status(400).json({ error: 'Invalid made-to-order flag.' });
+    const data = validateListing({ ...product, ...req.body, craftDetails: mergedDetails });
+    const nextDetails = readCraftDetails(data.craftDetails ?? product.craftDetails);
+    const packagingChanged = ['category', 'lengthCm', 'widthCm', 'heightCm', 'weightGrams']
+      .some((key) => data[key] !== product[key]) ||
+      priorDetails?.artForm !== nextDetails?.artForm ||
+      JSON.stringify(priorDetails?.materials || []) !== JSON.stringify(nextDetails?.materials || []);
+    const packaging = packagingChanged ? await getPackagingFields(product.cluster, data, nextDetails) : {};
+    const updated = await prisma.product.update({
+      where: { id: product.id, updatedAt: product.updatedAt },
+      data: {
+        ...data,
+        ...packaging,
+        isMadeToOrder,
+        images: imageUrls === undefined ? undefined : {
+          deleteMany: {},
+          create: imageUrls.map((imageUrl, sortOrder) => ({ imageUrl, sortOrder, isPrimary: sortOrder === 0 })),
+        },
+      },
+      include: { images: true },
+    });
+    res.json({ success: true, product: updated });
+  } catch (err) {
+    if (err.code === 'P2025') return res.status(409).json({ error: 'This listing changed. Refresh and try again.' });
     next(err);
   }
 });

@@ -1,0 +1,28 @@
+{
+  "horse": {
+    "slug": "sacred-bankura-terracotta-horse-16in",
+    "image": "/product-media/bankura-horse.jpeg",
+    "videos": [{ "url": "/product-media/bankura-horse-process.mp4", "label": "Terracotta shaping and firing", "isIllustrative": true }]
+  },
+  "mirror": {
+    "slug": "mirror-mandala-wall-plate",
+    "image": "/product-media/mirror-mandala.webp",
+    "videos": [
+      { "url": "/product-media/mirror-mandala-showcase.mp4", "label": "KaPra product showcase" },
+      { "url": "/product-media/mirror-mandala-process.mp4", "label": "Mandala making and mounting", "isIllustrative": true }
+    ]
+  },
+  "ganesha": {
+    "slug": "black-ganesha-decorative-plate",
+    "image": "/product-media/black-ganesha-plate.jpeg",
+    "videos": [{ "url": "/product-media/black-ganesha-process.mp4", "label": "Shaping and decorating the plate", "isIllustrative": true }]
+  },
+  "vase": {
+    "slug": "blue-and-white-floral-vase",
+    "image": "/product-media/blue-vase.webp",
+    "videos": [
+      { "url": "/product-media/blue-vase-showcase.mp4", "label": "Blue and white vase showcase", "isIllustrative": true },
+      { "url": "/product-media/blue-vase-workshop.mp4", "label": "Decorating and firing the vase", "isIllustrative": true }
+    ]
+  }
+}

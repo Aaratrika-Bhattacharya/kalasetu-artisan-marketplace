@@ -200,6 +200,47 @@ async function runTests() {
     assert(commissionRes.status === 201 && commissionRes.data.commission.milestones.length === 3, 'Created 3-stage milestone escrow commission');
     assert(commissionRes.data.commission.digitalIpHash.startsWith('urn:kalasetu:ip:'), 'Generated SHA-256 digital copyright mold hash');
 
+    // 12. Seller listing, public storytelling and production capacity
+    console.log('\n[Test 12] Seller Listing Management');
+    const sellerHeaders = { Authorization: `Bearer ${artisanToken}` };
+    const listing = await request('/api/v1/products', {
+      method: 'POST',
+      headers: sellerHeaders,
+      body: {
+        title: 'Wheel-thrown workshop bowl',
+        description: 'A small bowl made from locally sourced clay.',
+        retailPrice: 800,
+        artisanBasePrice: 640,
+        category: 'Pottery & Ceramics',
+        stockQuantity: 2,
+        craftDetails: { artForm: 'Terracotta', materials: ['Clay'], makingProcess: 'Thrown on a wheel and kiln-fired.' },
+      },
+    });
+    const listingId = listing.data.product?.id;
+    assert(listing.status === 201 && listingId, 'Artisan created a product with craft details');
+    if (listingId) {
+      const updated = await request(`/api/v1/products/${listingId}`, {
+        method: 'PATCH',
+        headers: sellerHeaders,
+        body: { stockQuantity: 4, craftDetails: { ...JSON.parse(listing.data.product.craftDetails), story: 'Made for the festive table.' } },
+      });
+      assert(updated.status === 200 && updated.data.product?.stockQuantity === 4, 'Artisan updated product inventory');
+      const detail = await request(`/api/v1/products/${listingId}`);
+      assert(detail.status === 200 && detail.data.product?.craftDetails?.story === 'Made for the festive table.',
+        'Product detail exposes saved storytelling metadata');
+      const unavailable = await request('/api/v1/orders/checkout', {
+        method: 'POST', headers: { Authorization: `Bearer ${customerToken}` },
+        body: { items: [{ productId: listingId, quantity: 5 }], shippingAddress: { fullName: 'Example Buyer', street: 'Example Street', pincode: '700029' } },
+      });
+      assert(unavailable.status === 409, 'Checkout checks available stock');
+    }
+    const capacity = await request('/api/v1/artisans/profile', {
+      method: 'PATCH', headers: sellerHeaders, body: { weeklyCapacity: 24 },
+    });
+    const dashboard = await request('/api/v1/artisans/my/dashboard', { headers: sellerHeaders });
+    assert(capacity.status === 200 && dashboard.data.profile?.weeklyCapacity === 24 &&
+      typeof dashboard.data.metrics?.grossSalesInr === 'number', 'Dashboard exposes saved capacity and sales totals');
+
     console.log(`\n=======================================================`);
     console.log(`🏁 Test Summary: ${passed} Passed, ${failed} Failed`);
     console.log(`=======================================================`);

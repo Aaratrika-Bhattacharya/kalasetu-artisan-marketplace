@@ -1,109 +1,75 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { ArrowRight, MapPin, ShieldCheck } from 'lucide-react';
 import { api } from '../../services/api';
-import { MapPin, Users, Award, ShieldCheck, ArrowRight, TrendingUp } from 'lucide-react';
+import { useSaved } from '../../context/SavedContext';
+import { getSampleArtisan, sampleProducts } from '../../services/sampleCatalog';
+import { CraftImage } from './CraftImage';
 
-interface Props {
-  onSelectArtisan: (artisanId: string) => void;
+interface DirectoryEntry {
+  id: string;
+  brandName: string;
+  artisanName: string;
+  artisanLineage?: string;
+  storyNarrative: string;
+  cluster: string;
+  state: string;
+  avatarUrl?: string;
+  experienceYears: number;
+  verificationStatus: string;
+  isDemo?: boolean;
 }
 
-export const ArtisansDirectoryView: React.FC<Props> = ({ onSelectArtisan }) => {
-  const [artisans, setArtisans] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+const sampleArtisans: DirectoryEntry[] = [...new Set(sampleProducts.map((p) => p.artisan.id))].map((id) => {
+  const sample = getSampleArtisan(id);
+  return { ...sample, cluster: sample.cluster.name, state: sample.cluster.state };
+});
+
+export function ArtisansDirectoryView({ onSelectArtisan }: { onSelectArtisan: (artisanId: string) => void }) {
+  const [artisans, setArtisans] = useState<DirectoryEntry[]>([]);
+  const [status, setStatus] = useState<'loading' | 'ready' | 'offline'>('loading');
+  const [followingOnly, setFollowingOnly] = useState(false);
+  const { following, toggleFollow } = useSaved();
 
   useEffect(() => {
-    api
-      .getArtisans()
-      .then((res) => {
-        if (res.success && res.artisans) {
-          setArtisans(res.artisans);
-        }
-      })
-      .catch((err) => console.error(err))
-      .finally(() => setLoading(false));
+    let current = true;
+    api.getArtisans().then((result) => {
+      if (!Array.isArray(result.artisans)) throw new Error('Artisans unavailable');
+      if (current) {
+        setArtisans(result.artisans);
+        setStatus('ready');
+      }
+    }).catch(() => current && setStatus('offline'));
+    return () => { current = false; };
   }, []);
 
-  return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8 animate-fade-in">
-      <div className="text-center space-y-3">
-        <div className="inline-flex items-center space-x-1.5 bg-amber-50 text-amber-900 border border-amber-200 px-3 py-1 rounded-full text-xs font-semibold">
-          <Users className="w-4 h-4 text-amber-600" />
-          <span>Generational Master Potters & Sculptors</span>
-        </div>
-        <h2 className="font-heritage text-3xl sm:text-4xl font-bold text-stone-900">
-          The Master Lineages
-        </h2>
-        <p className="text-stone-500 max-w-xl mx-auto text-xs sm:text-sm">
-          Connect directly with Bharat’s traditional craftspeople, eliminating exploitative middlemen markups.
-        </p>
-      </div>
+  const visible = [...artisans, ...sampleArtisans].filter((artisan) => !followingOnly || following.includes(artisan.id));
 
-      {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="h-56 bg-stone-100 rounded-2xl animate-pulse" />
-          ))}
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {artisans.map((a) => (
-            <div
-              key={a.id}
-              className="heritage-card rounded-2xl p-6 flex flex-col justify-between group"
-            >
-              <div className="space-y-4">
-                <div className="flex items-center space-x-3.5">
-                  <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-amber-400 shrink-0">
-                    <img
-                      src={
-                        a.avatarUrl ||
-                        'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=80'
-                      }
-                      alt={a.artisanName}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div>
-                    <h3 className="font-heritage font-bold text-base text-stone-900 group-hover:text-terracotta-700 transition-colors">
-                      {a.artisanName}
-                    </h3>
-                    <p className="text-stone-500 text-xs">{a.artisanLineage || a.brandName}</p>
-                    <span className="text-[11px] text-amber-800 font-semibold flex items-center mt-0.5">
-                      <MapPin className="w-3 h-3 mr-0.5" />
-                      {a.cluster} ({a.state})
-                    </span>
-                  </div>
-                </div>
-
-                <p className="text-stone-600 text-xs leading-relaxed line-clamp-3">
-                  {a.storyNarrative}
-                </p>
-
-                {/* Realization Tag */}
-                <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 flex items-center justify-between text-xs">
-                  <div>
-                    <span className="text-stone-500 text-[10px] block">Fieldwork Realization:</span>
-                    <span className="font-bold text-stone-900">₹{a.hourlyEarningBase}/hr baseline</span>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-emerald-700 font-bold block">On KalaSetu</span>
-                    <span className="font-extrabold text-emerald-800 text-sm">85% Direct</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="pt-4 border-t border-stone-100 mt-4">
-                <button
-                  onClick={() => onSelectArtisan(a.id)}
-                  className="w-full py-2.5 rounded-xl bg-stone-900 hover:bg-terracotta-600 text-white text-xs font-bold transition-colors flex items-center justify-center space-x-1.5"
-                >
-                  <span>View Storefront & Story</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+  return <section className="mx-auto max-w-7xl space-y-6 px-4 py-8 sm:px-6 lg:px-8">
+    <div className="flex flex-wrap items-center justify-between gap-3">
+      <div><h1 className="text-3xl font-bold sm:text-4xl">Meet the artisans</h1>
+        <p className="mt-2 text-sm text-stone-600">Explore workshops, craft traditions and the pieces made there.</p></div>
+      <button className="craft-outline" aria-pressed={followingOnly} onClick={() => setFollowingOnly(!followingOnly)}>
+        {followingOnly ? 'Show all artisans' : 'Artisans I follow'}
+      </button>
     </div>
-  );
-};
+    {status !== 'ready' && <p role="status" className="text-sm text-stone-600">{status === 'loading' ? 'Loading live profiles…' : 'Live profiles are unavailable. Browse the sample workshops below.'}</p>}
+    {visible.length ? <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {visible.map((artisan) => <article key={artisan.id} className="heritage-card flex flex-col gap-4 rounded-2xl p-5">
+        <div className="flex items-center gap-3">
+          <CraftImage src={artisan.avatarUrl} alt={artisan.avatarUrl ? artisan.artisanName : 'Portrait unavailable'} className="h-14 w-14 shrink-0 rounded-full object-cover" />
+          <div>
+            <h2 className="text-lg font-bold">{artisan.artisanName}</h2>
+            <p className="text-xs text-stone-600">{artisan.artisanLineage || artisan.brandName}{artisan.isDemo && ' · Sample artisan'}</p>
+            {artisan.verificationStatus === 'VERIFIED' && <p className="mt-1 flex items-center gap-1 text-xs font-semibold text-emerald-800"><ShieldCheck size={14} /> Verified artisan</p>}
+          </div>
+        </div>
+        <p className="flex items-center gap-1 text-sm font-semibold text-terracotta-800"><MapPin size={15} className="shrink-0" /> {artisan.cluster} · {artisan.state}</p>
+        <p className="line-clamp-3 flex-1 text-sm leading-relaxed text-stone-600">{artisan.storyNarrative}</p>
+        <div className="flex flex-wrap gap-2">
+          <button className="craft-button" onClick={() => onSelectArtisan(artisan.id)}>View workshop <ArrowRight size={15} /></button>
+          <button className="craft-outline" aria-pressed={following.includes(artisan.id)} onClick={() => toggleFollow(artisan.id)}>{following.includes(artisan.id) ? 'Following' : 'Follow'}</button>
+        </div>
+      </article>)}
+    </div> : <p className="rounded-xl border border-clayborder bg-white p-5 text-sm text-stone-600">Follow artisans to keep their workshops here.</p>}
+  </section>;
+}

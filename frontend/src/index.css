@@ -56,3 +56,21 @@
   box-shadow: 0 8px 24px rgba(156, 66, 33, 0.08);
   transform: translateY(-2px);
 }
+
+@layer components {
+  .craft-input {
+    @apply w-full rounded-xl border border-clayborder bg-white px-3 py-2.5 text-sm text-stone-900 focus:border-terracotta-600 focus:outline-none focus:ring-1 focus:ring-terracotta-600;
+  }
+
+  .craft-button {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-terracotta-700 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-terracotta-800 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .craft-outline {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-clayborder bg-white px-3 py-2 text-sm font-semibold text-stone-700 transition-colors hover:border-terracotta-500 hover:text-terracotta-800;
+  }
+}
+
+#catalog-section {
+  scroll-margin-top: 10rem;
+}

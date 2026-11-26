@@ -80,6 +80,7 @@ model ArtisanProfile {
   giArtisanCardUrl   String?
   
   experienceYears    Int                @default(10)
+  weeklyCapacity     Int?
   workshopSize       Int                @default(1)
   hourlyEarningBase  Float              @default(15.0) // Fieldwork baseline (e.g. ₹13.10)
   
@@ -109,6 +110,8 @@ model Product {
   
   category             String          // "Home Decor", "Serveware", "Sculpture", "Wall Decor", "Spiritual"
   subCategory          String?
+  // Optional JSON object for media, storytelling and merchandising metadata.
+  craftDetails         String?
   tags                 String          // JSON string array: ["terracotta", "GI-tagged", "unglazed"]
   
   retailPrice          Float           // Consumer retail price (₹)

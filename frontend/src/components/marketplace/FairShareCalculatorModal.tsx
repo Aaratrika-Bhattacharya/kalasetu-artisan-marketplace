@@ -41,14 +41,21 @@ export const FairShareCalculatorModal: React.FC<Props> = ({ product, onClose }) 
           </div>
           <button
             onClick={onClose}
+            aria-label="Close earnings breakdown"
             className="text-stone-400 hover:text-white p-1 rounded-lg transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Scrollable Body */}
-        <div className="p-6 space-y-6 overflow-y-auto text-sm">
+        {product ? <div className="space-y-4 p-6 text-sm">
+          <dl className="divide-y divide-clayborder rounded-xl border border-clayborder px-4">
+            <div className="flex justify-between py-3"><dt>Listed price</dt><dd>₹{product.retailPrice.toLocaleString('en-IN')}</dd></div>
+            <div className="flex justify-between py-3 font-bold text-emerald-800"><dt>Artisan earnings per piece</dt><dd>₹{product.artisanBasePrice.toLocaleString('en-IN')}</dd></div>
+            <div className="flex justify-between py-3"><dt>Remaining share of listed price</dt><dd>₹{(product.retailPrice - product.artisanBasePrice).toLocaleString('en-IN', { maximumFractionDigits: 2 })}</dd></div>
+          </dl>
+          <p className="text-stone-600">Shipping is calculated at checkout.</p>
+        </div> : <div className="p-6 space-y-6 overflow-y-auto text-sm">
           {/* Base Amount Control */}
           <div className="bg-stone-50 p-4 rounded-xl border border-stone-200 flex items-center justify-between">
             <span className="font-semibold text-stone-700 text-xs uppercase tracking-wide">
@@ -159,7 +166,7 @@ export const FairShareCalculatorModal: React.FC<Props> = ({ product, onClose }) 
               Direct to Artisan Family
             </div>
           </div>
-        </div>
+        </div>}
 
         {/* Footer */}
         <div className="bg-stone-50 border-t border-stone-200 px-6 py-4 flex justify-end">

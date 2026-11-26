@@ -79,6 +79,24 @@ export interface FairShareBreakdown {
   };
 }
 
+export interface ProductVideo {
+  url: string;
+  label: string;
+  isIllustrative?: boolean;
+}
+
+export interface CraftDetails {
+  videos?: ProductVideo[];
+  videoUrl?: string;
+  makingProcess?: string;
+  story?: string;
+  heritage?: string;
+  artForm?: string;
+  materials?: string[];
+  careInstructions?: string;
+  collections?: string[];
+}
+
 export interface Product {
   id: string;
   title: string;
@@ -88,6 +106,9 @@ export interface Product {
   vernacularDescs?: { [key in Language]?: string };
   category: string;
   subCategory?: string;
+  craftDetails?: CraftDetails;
+  isDemo?: boolean;
+  isTrendingSample?: boolean;
   tags: string[];
   retailPrice: number;
   artisanBasePrice: number;

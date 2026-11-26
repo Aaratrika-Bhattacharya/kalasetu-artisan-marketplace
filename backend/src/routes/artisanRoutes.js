@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const prisma = require('../prismaClient');
 const { authenticate, requireRole } = require('../middleware/auth');
+const { readCraftDetails } = require('../services/productDetails');
 
 /**
  * List all verified artisans
@@ -43,6 +44,7 @@ router.get('/', async (req, res, next) => {
       experienceYears: a.experienceYears,
       workshopSize: a.workshopSize,
       hourlyEarningBase: a.hourlyEarningBase,
+      verificationStatus: a.verificationStatus,
     }));
 
     res.json({ success: true, count: formatted.length, artisans: formatted });
@@ -81,6 +83,9 @@ router.get('/:id', async (req, res, next) => {
 
     const formattedProducts = artisan.products.map((p) => ({
       ...p,
+      craftDetails: readCraftDetails(p.craftDetails),
+      dimensions: { lengthCm: p.lengthCm, widthCm: p.widthCm, heightCm: p.heightCm, weightGrams: p.weightGrams },
+      cluster: { ...artisan.cluster, materialsUsed: JSON.parse(artisan.cluster.materialsUsed || '[]') },
       tags: JSON.parse(p.tags || '[]'),
       vernacularTitles: p.vernacularTitles ? JSON.parse(p.vernacularTitles) : null,
       vernacularDescs: p.vernacularDescs ? JSON.parse(p.vernacularDescs) : null,
@@ -92,6 +97,7 @@ router.get('/:id', async (req, res, next) => {
         id: artisan.id,
         brandName: artisan.brandName,
         artisanName: artisan.user.fullName,
+        avatarUrl: artisan.user.avatarUrl,
         artisanLineage: artisan.artisanLineage,
         storyNarrative: artisan.storyNarrative,
         workshopAddress: artisan.workshopAddress,
@@ -108,7 +114,9 @@ router.get('/:id', async (req, res, next) => {
           giRegNumber: artisan.cluster.giRegNumber,
           materials: JSON.parse(artisan.cluster.materialsUsed || '[]'),
         },
-        products: formattedProducts,
+        products: formattedProducts.map((product) => ({
+          ...product, artisan: { id, artisanName: artisan.user.fullName, brandName: artisan.brandName },
+        })),
       },
     });
   } catch (err) {
@@ -121,7 +129,7 @@ router.get('/:id', async (req, res, next) => {
  */
 router.patch('/profile', authenticate, requireRole(['ARTISAN', 'ADMIN']), async (req, res, next) => {
   try {
-    const { brandName, storyNarrative, workshopAddress, bankAccountNumber, bankIfscCode, upiId, experienceYears } = req.body;
+    const { brandName, storyNarrative, workshopAddress, bankAccountNumber, bankIfscCode, upiId, experienceYears, weeklyCapacity } = req.body;
 
     const artisan = await prisma.artisanProfile.findUnique({
       where: { userId: req.user.id },
@@ -129,6 +137,10 @@ router.patch('/profile', authenticate, requireRole(['ARTISAN', 'ADMIN']), async 
 
     if (!artisan) {
       return res.status(404).json({ success: false, error: 'Artisan profile not associated with this account.' });
+    }
+
+    if (weeklyCapacity !== undefined && (!Number.isInteger(weeklyCapacity) || weeklyCapacity < 0 || weeklyCapacity > 100000)) {
+      return res.status(400).json({ error: 'Capacity must be a whole number between 0 and 100,000.' });
     }
 
     const updated = await prisma.artisanProfile.update({
@@ -140,6 +152,7 @@ router.patch('/profile', authenticate, requireRole(['ARTISAN', 'ADMIN']), async 
         bankAccountNumber: bankAccountNumber || artisan.bankAccountNumber,
         bankIfscCode: bankIfscCode || artisan.bankIfscCode,
         upiId: upiId || artisan.upiId,
+        weeklyCapacity,
         experienceYears: experienceYears ? parseInt(experienceYears, 10) : artisan.experienceYears,
       },
     });
@@ -178,7 +191,7 @@ router.get('/my/dashboard', authenticate, requireRole(['ARTISAN']), async (req, 
         order: { select: { orderNumber: true, status: true, createdAt: true, shippingAddress: true } },
         product: { select: { title: true, images: true } },
       },
-      orderBy: { id: 'desc' },
+      orderBy: { order: { createdAt: 'desc' } },
     });
 
     // Payout records
@@ -187,9 +200,8 @@ router.get('/my/dashboard', authenticate, requireRole(['ARTISAN']), async (req, 
       orderBy: { createdAt: 'desc' },
     });
 
-    const totalEarned = orderItems
-      .filter((item) => ['PAID', 'PROCESSING', 'PACKED_SAFE_TRANSIT', 'SHIPPED', 'DELIVERED'].includes(item.order.status))
-      .reduce((sum, item) => sum + item.artisanUnitShare * item.quantity, 0);
+    const paidItems = orderItems.filter((item) => ['PAID', 'PROCESSING', 'PACKED_SAFE_TRANSIT', 'SHIPPED', 'DELIVERED'].includes(item.order.status));
+    const totalEarned = paidItems.reduce((sum, item) => sum + item.artisanUnitShare * item.quantity, 0);
 
     const pendingPackagingCount = orderItems.filter(
       (item) => item.packagingStatus === 'PENDING' && item.order.status === 'PAID'
@@ -203,20 +215,49 @@ router.get('/my/dashboard', authenticate, requireRole(['ARTISAN']), async (req, 
         artisanName: req.user.fullName,
         cluster: profile.cluster.name,
         verificationStatus: profile.verificationStatus,
+        weeklyCapacity: profile.weeklyCapacity,
         upiId: profile.upiId,
         bankAccountMasked: profile.bankAccountNumber ? `••••${profile.bankAccountNumber.slice(-4)}` : null,
       },
       metrics: {
         totalProductsCount: products.length,
-        totalOrdersCount: orderItems.length,
+        totalOrdersCount: new Set(orderItems.map((item) => item.orderId)).size,
+        grossSalesInr: paidItems.reduce((sum, item) => sum + item.subtotal, 0),
         totalArtisanEarnedInr: totalEarned,
         pendingPackagingCount,
         breakagePreventedCount: orderItems.filter((i) => !i.breakageClaimed).length,
       },
       recentProducts: products.slice(0, 5),
+      products: products.map((product) => ({ ...product, craftDetails: readCraftDetails(product.craftDetails) })),
       recentOrders: orderItems.slice(0, 10),
+      fulfillmentQueue: orderItems.filter((item) => ['PAID', 'PROCESSING', 'PACKED_SAFE_TRANSIT'].includes(item.order.status)),
       recentPayouts: payouts,
     });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.patch('/my/orders/:id/packaging', authenticate, requireRole(['ARTISAN']), async (req, res, next) => {
+  try {
+    const previousStatus = { PACKED_IN_BIO_STRAW: 'PENDING', INSPECTED: 'PACKED_IN_BIO_STRAW' };
+    const { packagingStatus } = req.body;
+    if (!Object.hasOwn(previousStatus, packagingStatus)) {
+      return res.status(400).json({ error: 'Invalid packaging status.' });
+    }
+    const profile = await prisma.artisanProfile.findUnique({ where: { userId: req.user.id }, select: { id: true } });
+    if (!profile) return res.status(404).json({ error: 'Artisan profile not found.' });
+    const { count } = await prisma.orderItem.updateMany({
+      where: {
+        id: req.params.id,
+        artisanId: profile.id,
+        order: { status: { in: ['PAID', 'PROCESSING', 'PACKED_SAFE_TRANSIT'] } },
+        packagingStatus: previousStatus[packagingStatus],
+      },
+      data: { packagingStatus },
+    });
+    if (!count) return res.status(409).json({ error: 'This item is unavailable or its packaging status has changed.' });
+    res.json({ success: true, packagingStatus });
   } catch (err) {
     next(err);
   }

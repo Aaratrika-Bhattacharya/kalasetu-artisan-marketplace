@@ -121,7 +121,7 @@ npm install
 npx prisma db push
 node src/seed.js
 
-# Run automated integration tests (21 tests)
+# Run API integration tests
 node src/testIntegration.js
 
 # Start backend server (port 5000)
@@ -145,7 +145,7 @@ Open **`http://localhost:5000`** (or `http://localhost:3000` in dev mode) in you
 
 ## 🧪 Automated Integration Tests
 
-KalaSetu includes an end-to-end integration test suite verifying 21 critical milestones:
+KalaSetu includes an end-to-end integration test suite covering the core API flows:
 ```bash
 cd backend
 node src/testIntegration.js
@@ -175,3 +175,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 *Preserving Bharat's Generational Craft Lineages with Dignity, Technology & Fair Realization.*
+
+## Marketplace MVP
+
+Start the React storefront and Express backend using the Quick Start above. For an existing local database, run `npx prisma db push` from `backend/` after pulling these changes to add the optional product storytelling fields and weekly capacity. Keep your current data by skipping the seed step. The seed script resets the local catalog and orders when run.
+
+- Use the category tiles, regional links and collections to browse. Filters combine within the catalog. The heart in the header opens the wishlist. Wishlist and followed artisans are saved in the current browser.
+- Sample listings use fictional artisan profiles and generated imagery to illustrate categories beyond the seeded catalog. Sample pieces can be added to the cart for preview. Remove them before checking out with live listings.
+- Sign in as an artisan to create or edit listings, view sales, set weekly capacity and update paid line items from pending to packed to inspected. A listing can use uploaded images and MP4 or WebM video. The demo server stores media under `backend/uploads/`. Use persistent storage if you redeploy it.
+- The AI video studio previews images and an optional style locally. Generate AI Video displays Coming Soon. Capacity is a planning figure, delivery ranges are storefront estimates, and sellers update inventory manually.
+
+Run `npm test` from `frontend/` for catalog and AI placeholder tests. Run `node tests/productDetails.test.js` from `backend/` for craft metadata unit tests. Run `node src/testIntegration.js` from `backend/` against a seeded development database for API integration coverage.

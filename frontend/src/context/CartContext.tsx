@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { isAvailable } from '../services/catalog';
 import { CartItem, Product } from '../types';
 
 interface CartContextType {
@@ -29,20 +30,22 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isCartOpen, setIsCartOpen] = useState(false);
 
   useEffect(() => {
-    localStorage.setItem('kalasetu_cart', JSON.stringify(items));
+    try { localStorage.setItem('kalasetu_cart', JSON.stringify(items)); } catch { /* Cart remains usable in memory. */ }
   }, [items]);
 
   const addItem = (product: Product, quantity = 1) => {
+    if (!isAvailable(product) || !Number.isSafeInteger(quantity) || quantity < 1) return;
+    const limit = product.isMadeToOrder ? Number.MAX_SAFE_INTEGER : product.stockQuantity;
     setItems((prev) => {
       const existing = prev.find((item) => item.product.id === product.id);
       if (existing) {
         return prev.map((item) =>
           item.product.id === product.id
-            ? { ...item, quantity: item.quantity + quantity }
+            ? { ...item, product, quantity: Math.min(item.quantity + quantity, limit) }
             : item
         );
       }
-      return [...prev, { product, quantity }];
+      return [...prev, { product, quantity: Math.min(quantity, limit) }];
     });
     setIsCartOpen(true);
   };
@@ -52,13 +55,14 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const updateQuantity = (productId: string, quantity: number) => {
+    if (!Number.isSafeInteger(quantity)) return;
     if (quantity <= 0) {
       removeItem(productId);
       return;
     }
     setItems((prev) =>
       prev.map((item) =>
-        item.product.id === productId ? { ...item, quantity } : item
+        item.product.id === productId ? { ...item, quantity: Math.min(quantity, item.product.isMadeToOrder ? quantity : Math.max(1, item.product.stockQuantity)) } : item
       )
     );
   };

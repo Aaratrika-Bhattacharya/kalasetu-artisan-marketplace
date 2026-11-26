@@ -5,6 +5,7 @@ import { useLanguage } from '../../context/LanguageContext';
 import { LanguagePicker } from './LanguagePicker';
 import {
   ShoppingBag,
+  Heart,
   Mic,
   ShieldCheck,
   User as UserIcon,
@@ -18,11 +19,12 @@ import {
 interface Props {
   activeTab: string;
   setActiveTab: (tab: string) => void;
+  onOpenWishlist: () => void;
   onOpenAuth: () => void;
   onOpenCommission: () => void;
 }
 
-export const Navbar: React.FC<Props> = ({ activeTab, setActiveTab, onOpenAuth, onOpenCommission }) => {
+export const Navbar: React.FC<Props> = ({ activeTab, setActiveTab, onOpenWishlist, onOpenAuth, onOpenCommission }) => {
   const { user, logout, isArtisan, isAdmin } = useAuth();
   const { totalItemsCount, setIsCartOpen } = useCart();
   const { t } = useLanguage();
@@ -33,11 +35,11 @@ export const Navbar: React.FC<Props> = ({ activeTab, setActiveTab, onOpenAuth, o
       {/* Top Heritage Impact Ribbon */}
       <div className="bg-stone-900 text-stone-200 text-xs py-1.5 px-4 text-center font-medium tracking-wide flex justify-center items-center space-x-2">
         <span className="bg-terracotta-600 text-white text-[10px] px-2 py-0.5 rounded font-bold uppercase">Fair-Trade Guarantee</span>
-        <span>85% of retail price disbursed directly to master artisans</span>
+        <span>See what artisans earn on each listing</span>
         <span className="text-stone-500">•</span>
         <span className="hidden sm:inline text-amber-400 flex items-center">
           <ShieldCheck className="w-3.5 h-3.5 inline mr-1" />
-          Zero-Breakage Bio-Straw Packaging Certified
+          Protective packaging for fragile crafts
         </span>
       </div>
 
@@ -46,28 +48,28 @@ export const Navbar: React.FC<Props> = ({ activeTab, setActiveTab, onOpenAuth, o
           {/* Brand Logo */}
           <div
             onClick={() => setActiveTab('marketplace')}
-            className="flex items-center space-x-3 cursor-pointer group"
+            className="flex items-center space-x-2 sm:space-x-3 cursor-pointer group"
           >
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-terracotta-600 to-terracotta-800 flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform">
+            <div className="w-8 h-8 shrink-0 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-terracotta-600 to-terracotta-800 flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform">
               <span className="text-2xl">🏺</span>
             </div>
             <div>
               <div className="flex items-baseline space-x-1.5">
-                <span className="font-heritage text-2xl font-bold tracking-tight text-stone-900">
+                <span className="font-heritage text-lg sm:text-2xl font-bold tracking-tight text-stone-900">
                   KalaSetu
                 </span>
-                <span className="font-heritage text-base text-terracotta-600 font-semibold">
+                <span className="hidden sm:inline font-heritage text-base text-terracotta-600 font-semibold">
                   (कला सेतु)
                 </span>
               </div>
-              <p className="text-[11px] text-stone-500 font-medium tracking-wide">
+              <p className="hidden sm:block text-[11px] text-stone-500 font-medium tracking-wide">
                 Direct-to-Connoisseur Artisan Heritage
               </p>
             </div>
           </div>
 
           {/* Navigation Items */}
-          <nav className="hidden md:flex items-center space-x-1 lg:space-x-2">
+          <nav className="hidden xl:flex items-center space-x-1 lg:space-x-2">
             <button
               onClick={() => setActiveTab('marketplace')}
               className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
@@ -125,13 +127,13 @@ export const Navbar: React.FC<Props> = ({ activeTab, setActiveTab, onOpenAuth, o
           </nav>
 
           {/* Right Action Icons & Controls */}
-          <div className="flex items-center space-x-3">
-            <LanguagePicker />
+          <div className="flex items-center gap-1 sm:gap-3">
+            <div className="hidden lg:block"><LanguagePicker /></div>
 
             {/* Artisan Studio Portal Button */}
             <button
               onClick={() => setActiveTab('artisan_portal')}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
+              className={`hidden xl:flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
                 activeTab === 'artisan_portal'
                   ? 'bg-amber-600 text-white border-amber-600 shadow-sm'
                   : 'bg-amber-50/80 text-amber-900 border-amber-300 hover:bg-amber-100'
@@ -154,6 +156,9 @@ export const Navbar: React.FC<Props> = ({ activeTab, setActiveTab, onOpenAuth, o
               <SlidersHorizontal className="w-4 h-4" />
             </button>
 
+            <button onClick={onOpenWishlist} className="rounded-lg p-2 text-terracotta-700 hover:bg-terracotta-50" aria-label="Open wishlist">
+              <Heart className="h-5 w-5" />
+            </button>
             {/* Shopping Cart Pill */}
             <button
               onClick={() => setIsCartOpen(true)}
@@ -247,15 +252,22 @@ export const Navbar: React.FC<Props> = ({ activeTab, setActiveTab, onOpenAuth, o
               </div>
             ) : (
               <button
+                aria-label="Sign in"
                 onClick={onOpenAuth}
-                className="px-4 py-2 rounded-xl bg-terracotta-600 text-white text-xs font-semibold hover:bg-terracotta-700 transition-colors shadow-sm flex items-center space-x-1.5"
+                className="px-2.5 sm:px-4 py-2 rounded-xl bg-terracotta-600 text-white text-xs font-semibold hover:bg-terracotta-700 transition-colors shadow-sm flex items-center space-x-1.5"
               >
                 <UserIcon className="w-3.5 h-3.5" />
-                <span>Sign In</span>
+                <span className="hidden sm:inline">Sign In</span>
               </button>
             )}
           </div>
         </div>
+        <nav aria-label="Browse KalaSetu" className="flex gap-1 overflow-x-auto pb-2 text-xs font-semibold xl:hidden">
+          {[['marketplace', t('nav_marketplace')], ['clusters', t('nav_clusters')], ['artisans', t('nav_artisans')], ['tracking', t('nav_track_order')], ['artisan_portal', 'Studio']].map(([tab, label]) =>
+            <button key={tab} onClick={() => setActiveTab(tab)} className={`shrink-0 rounded-lg px-2 py-1.5 ${activeTab === tab ? 'bg-terracotta-50 text-terracotta-800' : 'text-stone-700'}`}>{label}</button>)}
+          <button onClick={onOpenCommission} className="shrink-0 px-2 py-1.5 text-amber-800">{t('nav_commissions')}</button>
+        </nav>
+        <div className="flex pb-2 lg:hidden"><LanguagePicker /></div>
       </div>
     </header>
   );

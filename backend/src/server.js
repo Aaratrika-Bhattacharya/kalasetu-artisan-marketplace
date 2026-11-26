@@ -25,7 +25,10 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Static uploads directory
-app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
+app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads'), {
+  setHeaders: (res) => res.setHeader('X-Content-Type-Options', 'nosniff'),
+}));
+app.use('/api/v1/media', require('./routes/mediaRoutes'));
 
 // API Routes Mounted under /api/v1
 app.use('/api/v1/auth', authRoutes);
