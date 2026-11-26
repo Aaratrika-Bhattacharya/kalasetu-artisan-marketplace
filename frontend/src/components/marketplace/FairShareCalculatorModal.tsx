@@ -74,11 +74,11 @@ export const FairShareCalculatorModal: React.FC<Props> = ({ product, onClose }) 
 
           {/* Side by Side Comparison Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* KalaSetu Direct Model */}
+            {/* KaPra Direct Model */}
             <div className="bg-emerald-50/60 border-2 border-emerald-500/60 rounded-xl p-4 space-y-3">
               <div className="flex items-center justify-between border-b border-emerald-200 pb-2">
                 <span className="font-bold text-emerald-950 font-heritage text-base">
-                  KalaSetu Direct Model
+                  KaPra Direct Model
                 </span>
                 <span className="bg-emerald-600 text-white text-[10px] font-bold px-2 py-0.5 rounded">
                   85% TO ARTISAN
@@ -154,7 +154,7 @@ export const FairShareCalculatorModal: React.FC<Props> = ({ product, onClose }) 
           <div className="bg-amber-50 border border-amber-300 rounded-xl p-4 flex items-center justify-between">
             <div>
               <div className="text-xs text-amber-800 font-semibold uppercase tracking-wider">
-                Extra Family Earnings on KalaSetu
+                Extra Family Earnings on KaPra
               </div>
               <div className="font-heritage text-2xl font-bold text-amber-950 mt-0.5">
                 +₹{additionalArtisanBenefit} per piece (+372% increase)

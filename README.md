@@ -1,4 +1,4 @@
-# KalaSetu (कला सेतु) — Indian Artisan E-Commerce Marketplace
+# KaPra — Indian Artisan E-Commerce Marketplace
 
 > **Direct-to-Connoisseur Fair-Trade Marketplace Connecting Bharat's Master Clay & Ceramic Lineages with Urban Patrons, Eliminating Middlemen and Ensuring Zero-Breakage Logistics.**
 
@@ -22,7 +22,7 @@ Traditional Indian clay, pottery, and terracotta craft lineages suffer from seve
 3. **Digital Illiteracy**: Traditional craft elders cannot type complex English product listings or navigate standard e-commerce platforms.
 4. **Contract Default & Mold Theft**: Sculptors suffer from buyer defaults and piracy of master sculpting molds.
 
-**KalaSetu directly eliminates these bottlenecks:**
+**KaPra directly eliminates these bottlenecks:**
 - **SafeTransit™ Bio-Composite Packaging**: Drop-tested moulded paddy straw shock inserts reduce transit breakage from 27.5% to **under 3%**, backed by a **100% Free Replacement Mutual Reserve Pool** at zero cost to the artisan.
 - **85% Direct Artisan Realization**: Every product displays the exact amount disbursed directly to the artisan lineage, lifting family realization from **₹13.10/hr to ₹68.60/hr (+423%)**.
 - **Gemini Multimodal Voice Intake**: Artisans simply snap a photo and hold a microphone to describe their craft in **Bengali, Hindi, or Gujarati**; Gemini AI transcribes, translates, and generates structured catalog data.
@@ -32,7 +32,7 @@ Traditional Indian clay, pottery, and terracotta craft lineages suffer from seve
 
 ## 👥 The 7 Surveyed Artisan Clusters
 
-| Artisan / Lineage | Cluster Location | Craft Discipline | Materials / Mineral Base | Key Problem Solved | KalaSetu Intervention |
+| Artisan / Lineage | Cluster Location | Craft Discipline | Materials / Mineral Base | Key Problem Solved | KaPra Intervention |
 |---|---|---|---|---|---|
 | **Dipankar Kundu & Pal Lineage** | Bishnupur, Bankura, West Bengal | Heritage Bengal Terracotta | Local alluvial clay, sand, wood smoke | 27.5% transit breakage; ₹13.10/hr return; digital illiteracy | Bio-composite straw shock-rated inserts (&lt;3% breakage); Vernacular AI voice onboarding |
 | **Nand Kishore** | Jaipur, Rajasthan | Jaipur Blue Pottery (**GI-Tagged**) | Quartz 80%, cullet glass, soda, katira | 3-month monsoon solar-drying freeze (₹12-15L idle loss); REBA 8 strain | Monsoon advance buffer; wholesale B2B portal; SafeTransit cell dividers |
@@ -145,7 +145,7 @@ Open **`http://localhost:5000`** (or `http://localhost:3000` in dev mode) in you
 
 ## 🧪 Automated Integration Tests
 
-KalaSetu includes an end-to-end integration test suite covering the core API flows:
+KaPra includes an end-to-end integration test suite covering the core API flows:
 ```bash
 cd backend
 node src/testIntegration.js

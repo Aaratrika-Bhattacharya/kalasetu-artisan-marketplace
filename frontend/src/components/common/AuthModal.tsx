@@ -95,7 +95,7 @@ export const AuthModal: React.FC<Props> = ({ onClose }) => {
         <div className="bg-stone-900 text-white p-5 flex items-center justify-between">
           <div>
             <h3 className="font-heritage font-bold text-lg">
-              Sign In to KalaSetu
+              Sign In to KaPra
             </h3>
             <p className="text-stone-400 text-xs">
               Direct-to-Connoisseur Fair-Trade Portal

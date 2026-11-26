@@ -69,7 +69,7 @@ export const CheckoutModal: React.FC<Props> = ({ onClose, onOrderSuccess }) => {
           key: keyId,
           amount: rzpOrder.amount,
           currency: 'INR',
-          name: 'KalaSetu Artisan Marketplace',
+          name: 'KaPra Artisan Marketplace',
           description: `Order #${order.orderNumber} - SafeTransit™ Guaranteed`,
           image: 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=120&q=80',
           order_id: rzpOrder.id,

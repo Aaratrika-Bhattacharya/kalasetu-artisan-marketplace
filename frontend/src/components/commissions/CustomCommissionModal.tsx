@@ -174,7 +174,7 @@ export const CustomCommissionModal: React.FC<Props> = ({ onClose }) => {
             <div className="bg-amber-50/80 border border-amber-200 rounded-xl p-3.5 space-y-2 text-[11px] text-amber-950">
               <div className="font-bold flex items-center">
                 <Lock className="w-3.5 h-3.5 mr-1 text-amber-700" />
-                How KalaSetu Milestone Escrow Protects You & The Artisan:
+                How KaPra Milestone Escrow Protects You & The Artisan:
               </div>
               <ul className="space-y-1 list-disc list-inside text-amber-900">
                 <li>Stage 1 (25%): Unlocked for raw alluvial clay & steel armature lock.</li>

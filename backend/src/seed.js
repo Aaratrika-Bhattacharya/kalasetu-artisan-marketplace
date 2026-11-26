@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs');
 const prisma = require('./prismaClient');
 
 async function seed() {
-  console.log('🌱 Starting KalaSetu Master Database Seeding...');
+  console.log('🌱 Starting KaPra Master Database Seeding...');
 
   // Clean existing tables
   await prisma.review.deleteMany();
@@ -87,7 +87,7 @@ async function seed() {
 
   const adminUser = await prisma.user.create({
     data: {
-      fullName: 'KalaSetu Master Governance',
+      fullName: 'KaPra Master Governance',
       email: 'admin@kalasetu.org',
       phoneNumber: '+919800000001',
       passwordHash: adminPasswordHash,
@@ -131,7 +131,7 @@ async function seed() {
         name: 'Dipankar Kundu',
         brandName: 'Pal Lineage Terracotta Studio',
         lineage: '5th Generation Pal Master Potter',
-        story: 'Dipankar Kundu carries forward three centuries of sacred Bankura terracotta sculpture. Working alongside his extended family in Bishnupur, their master kilns produce timeless figures using fine river silt, historically plagued by 27.5% transit loss before KalaSetu SafeTransit™ bio-straw packaging.',
+        story: 'Dipankar Kundu carries forward three centuries of sacred Bankura terracotta sculpture. Working alongside his extended family in Bishnupur, their master kilns produce timeless figures using fine river silt, historically plagued by 27.5% transit loss before KaPra SafeTransit™ bio-straw packaging.',
         address: 'Panchmura Potter Colony, Bishnupur, Bankura, West Bengal 722122',
         upiId: 'dipankar.pal@upi',
         hourlyBase: 13.1,
@@ -213,7 +213,7 @@ async function seed() {
         name: 'Nand Kishore',
         brandName: 'Kishore Blue Pottery Works',
         lineage: 'Master Craftsman & Factory Cluster Lead',
-        story: 'Nand Kishore runs an artisan workshop in Jaipur employing 35 craftspeople. Using traditional quartz dough and lead-free natural mineral glazes, their studio produces up to 10,000 units monthly during dry seasons, supported on KalaSetu by monsoon advance buffering.',
+        story: 'Nand Kishore runs an artisan workshop in Jaipur employing 35 craftspeople. Using traditional quartz dough and lead-free natural mineral glazes, their studio produces up to 10,000 units monthly during dry seasons, supported on KaPra by monsoon advance buffering.',
         address: 'Kot Jewar Blue Pottery Hub, Jaipur, Rajasthan 303908',
         upiId: 'nandkishore.ceramics@upi',
         hourlyBase: 150.0,
@@ -295,7 +295,7 @@ async function seed() {
         name: 'Priya Jethwa',
         brandName: 'Aabhla Lippan Kaam Studio',
         lineage: 'Traditional Kutchi Mud-Relief Artisan',
-        story: 'Priya Jethwa preserves the timeless mud-relief architecture of Bhunga desert homes. Through KalaSetu, she eliminated the ₹333/piece outsourced carpentry burden, directly creating and shipping authentic mirror relief murals to art collectors worldwide.',
+        story: 'Priya Jethwa preserves the timeless mud-relief architecture of Bhunga desert homes. Through KaPra, she eliminated the ₹333/piece outsourced carpentry burden, directly creating and shipping authentic mirror relief murals to art collectors worldwide.',
         address: 'Hodka Crafts Village, Bhuj, Kutch, Gujarat 370510',
         upiId: 'priya.lippan@upi',
         hourlyBase: 30.8,
@@ -404,7 +404,7 @@ async function seed() {
         name: 'Shibu Biswas',
         brandName: 'Biswas Master Clay Sculpting Studio',
         lineage: 'National Award-Winning Miniature Sculptor',
-        story: 'Shibu Biswas crafts astonishingly lifelike miniature figurines using fine Nadia alluvial silt infused with cotton lint. His works have been exhibited in major museums across Europe, now directly available on KalaSetu bypassing intermediary gallery markups.',
+        story: 'Shibu Biswas crafts astonishingly lifelike miniature figurines using fine Nadia alluvial silt infused with cotton lint. His works have been exhibited in major museums across Europe, now directly available on KaPra bypassing intermediary gallery markups.',
         address: 'Ghurni Clay Modellers Colony, Krishnanagar, Nadia, West Bengal 741101',
         upiId: 'shibu.miniatures@upi',
         hourlyBase: 110.0,
@@ -458,7 +458,7 @@ async function seed() {
         name: 'Santu Roy',
         brandName: 'Roy Monumental Fine Arts Studio',
         lineage: 'Kumartuli Master Sculptor & Armature Architect',
-        story: 'Santu Roy specializes in life-sized portraiture and sacred monumental sculptures up to 22 feet. Utilizing KalaSetu 3-stage milestone escrow and digital IP mold protection, his studio securely fulfills bespoke fine art commissions worldwide.',
+        story: 'Santu Roy specializes in life-sized portraiture and sacred monumental sculptures up to 22 feet. Utilizing KaPra 3-stage milestone escrow and digital IP mold protection, his studio securely fulfills bespoke fine art commissions worldwide.',
         address: 'Kumartuli Ghat Road, Shobhabazar, Kolkata, West Bengal 700005',
         upiId: 'santu.kumartuli@upi',
         hourlyBase: 95.0,

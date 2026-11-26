@@ -1,4 +1,4 @@
-// KalaSetu - Artisan E-Commerce Platform Server
+// KaPra - Artisan E-Commerce Platform Server
 // Runs natively on Node.js with ZERO external npm dependencies!
 
 const http = require('http');
@@ -160,7 +160,7 @@ const server = http.createServer((req, res) => {
             commissionId: commission.id,
             ipProtectionHash: commission.ipProtectionHash,
             escrowMilestones: commission.escrowMilestones,
-            message: "Custom commission registered under KalaSetu Escrow Guarantee with digital IP timestamp."
+            message: "Custom commission registered under KaPra Escrow Guarantee with digital IP timestamp."
           }));
         } catch (e) {
           res.writeHead(400);
@@ -229,7 +229,7 @@ const server = http.createServer((req, res) => {
 
 server.listen(PORT, '127.0.0.1', () => {
   console.log(`=======================================================`);
-  console.log(`  KalaSetu Artisan Platform running at http://localhost:${PORT}`);
+  console.log(`  KaPra Artisan Platform running at http://localhost:${PORT}`);
   console.log(`  Serving 7 Indian Clay & Ceramic Artisan Clusters`);
   console.log(`=======================================================`);
 });

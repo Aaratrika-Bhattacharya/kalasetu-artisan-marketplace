@@ -1,4 +1,4 @@
-// KalaSetu Artisan Database - Embedded Client Data
+// KaPra Artisan Database - Embedded Client Data
 window.__ARTISAN_DATA__ = {
   "artisans": [
     {
@@ -429,7 +429,7 @@ window.__ARTISAN_DATA__ = {
       "climateVulnerability": "Low (indoor climate-monitored modeling studio)",
       "mechanizationLevel": "Level 1 – manual modeling + armature bending",
       "targetIntervention": "Reinforced armature benders, silicone mould casting & digital escrow contracts",
-      "story": "Santu Roy is a sculptor capable of monumental life-size and 22-foot public art installations. Having trained in Kumartuli and classical academic sculpture, he suffers from client contract defaults and copycat piracy. KalaSetu protects his commissions with legal milestone escrow.",
+      "story": "Santu Roy is a sculptor capable of monumental life-size and 22-foot public art installations. Having trained in Kumartuli and classical academic sculpture, he suffers from client contract defaults and copycat piracy. KaPra protects his commissions with legal milestone escrow.",
       "avatar": "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=400&q=80",
       "banner": "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=1000&q=80",
       "products": [
@@ -587,9 +587,9 @@ window.__ARTISAN_DATA__ = {
       "target": "Dipankar Kundu & Santu Roy (All Clusters)",
       "costLow": 0,
       "costHigh": 0,
-      "costBasis": "Open-source digital software (RuTAG / KalaSetu)",
+      "costBasis": "Open-source digital software (RuTAG / KaPra)",
       "impact": "Voice-to-catalog generation in Bengali, Hindi, Gujarati; publishes direct to ONDC Open Network",
-      "status": "Live Feature in KalaSetu Portal"
+      "status": "Live Feature in KaPra Portal"
     },
     {
       "id": "int-05",

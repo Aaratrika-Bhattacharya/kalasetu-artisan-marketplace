@@ -124,7 +124,7 @@ class GeminiService {
    * Direct Gemini API invocation via REST HTTPS
    */
   async _callGeminiAPI({ voiceTranscript, spokenLang, imageMeta }) {
-    const prompt = `You are an expert Indian Handicrafts Curator and Multilingual Cataloger for KalaSetu platform.
+    const prompt = `You are an expert Indian Handicrafts Curator and Multilingual Cataloger for KaPra platform.
 Analyze this artisan voice note in language "${spokenLang}": "${voiceTranscript}".
 Extract structured JSON:
 {

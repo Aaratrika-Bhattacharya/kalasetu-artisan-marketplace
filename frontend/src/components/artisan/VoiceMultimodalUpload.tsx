@@ -290,7 +290,7 @@ export const VoiceMultimodalUpload: React.FC<Props> = ({ onSuccess }) => {
             {isPublishing ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Publishing to KalaSetu Marketplace...</span>
+                <span>Publishing to KaPra Marketplace...</span>
               </>
             ) : (
               <>

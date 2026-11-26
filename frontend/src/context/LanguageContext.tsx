@@ -10,7 +10,7 @@ interface LanguageContextType {
 
 const UI_DICTIONARY: Record<Language, Record<string, string>> = {
   en: {
-    brand_name: 'KalaSetu',
+    brand_name: 'KaPra',
     brand_tagline: 'Direct-to-Connoisseur Indian Clay & Ceramic Marketplace',
     nav_marketplace: 'Marketplace',
     nav_clusters: 'GI Craft Clusters',
@@ -37,7 +37,7 @@ const UI_DICTIONARY: Record<Language, Record<string, string>> = {
     zero_breakage_promise: 'Zero Transit Breakage Guarantee',
   },
   hi: {
-    brand_name: 'कला सेतु',
+    brand_name: 'KaPra',
     brand_tagline: 'भारतीय माटी और चीनी मिट्टी शिल्प का सीधा मंच',
     nav_marketplace: 'हाट बाज़ार',
     nav_clusters: 'शिल्प संकुल (GI)',
@@ -64,7 +64,7 @@ const UI_DICTIONARY: Record<Language, Record<string, string>> = {
     zero_breakage_promise: 'शून्य क्षति गारंटी',
   },
   bn: {
-    brand_name: 'কলা সেতু',
+    brand_name: 'KaPra',
     brand_tagline: 'বাংলার ও ভারতের ঐতিহ্যবাহী মাটির শিল্পীদের সরাসরি হাট',
     nav_marketplace: 'শিল্প বিপণি',
     nav_clusters: 'জিআই শিল্প অঞ্চল',
@@ -91,7 +91,7 @@ const UI_DICTIONARY: Record<Language, Record<string, string>> = {
     zero_breakage_promise: 'ভাঙচুর মুক্ত ডেলিভারি প্রতিশ্রুতি',
   },
   gu: {
-    brand_name: 'કલા સેતુ',
+    brand_name: 'KaPra',
     brand_tagline: 'ભારતીય પરંપરાગત માટી અને સિરામિક શિલ્પીઓનું સીધું બજાર',
     nav_marketplace: 'બજાર',
     nav_clusters: 'જીઆઈ ક્રાફ્ટ ક્લસ્ટર્સ',

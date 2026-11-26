@@ -11,7 +11,7 @@ export const Footer: React.FC = () => {
             <div className="flex items-center space-x-2">
               <span className="text-2xl">🏺</span>
               <span className="font-heritage text-xl font-bold text-white tracking-wide">
-                KalaSetu (कला सेतु)
+                KaPra
               </span>
             </div>
             <p className="text-stone-400 leading-relaxed text-xs">
@@ -94,7 +94,7 @@ export const Footer: React.FC = () => {
 
         {/* Bottom Credits */}
         <div className="pt-8 flex flex-col sm:flex-row justify-between items-center text-stone-500 text-xs">
-          <p>© 2026 KalaSetu (कला सेतु). Built for Bharat’s Heritage Artisans with Fair Realization.</p>
+          <p>© 2026 KaPra. Built for Bharat’s Heritage Artisans with Fair Realization.</p>
           <div className="flex items-center space-x-1 mt-4 sm:mt-0">
             <span>Preserving Indian Heritage Craft with</span>
             <Heart className="w-3.5 h-3.5 text-red-500 inline fill-red-500 mx-1" />

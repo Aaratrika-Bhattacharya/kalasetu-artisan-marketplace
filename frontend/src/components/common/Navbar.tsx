@@ -56,10 +56,7 @@ export const Navbar: React.FC<Props> = ({ activeTab, setActiveTab, onOpenWishlis
             <div>
               <div className="flex items-baseline space-x-1.5">
                 <span className="font-heritage text-lg sm:text-2xl font-bold tracking-tight text-stone-900">
-                  KalaSetu
-                </span>
-                <span className="hidden sm:inline font-heritage text-base text-terracotta-600 font-semibold">
-                  (कला सेतु)
+                  KaPra
                 </span>
               </div>
               <p className="hidden sm:block text-[11px] text-stone-500 font-medium tracking-wide">
@@ -262,7 +259,7 @@ export const Navbar: React.FC<Props> = ({ activeTab, setActiveTab, onOpenWishlis
             )}
           </div>
         </div>
-        <nav aria-label="Browse KalaSetu" className="flex gap-1 overflow-x-auto pb-2 text-xs font-semibold xl:hidden">
+        <nav aria-label="Browse KaPra" className="flex gap-1 overflow-x-auto pb-2 text-xs font-semibold xl:hidden">
           {[['marketplace', t('nav_marketplace')], ['clusters', t('nav_clusters')], ['artisans', t('nav_artisans')], ['tracking', t('nav_track_order')], ['artisan_portal', 'Studio']].map(([tab, label]) =>
             <button key={tab} onClick={() => setActiveTab(tab)} className={`shrink-0 rounded-lg px-2 py-1.5 ${activeTab === tab ? 'bg-terracotta-50 text-terracotta-800' : 'text-stone-700'}`}>{label}</button>)}
           <button onClick={onOpenCommission} className="shrink-0 px-2 py-1.5 text-amber-800">{t('nav_commissions')}</button>

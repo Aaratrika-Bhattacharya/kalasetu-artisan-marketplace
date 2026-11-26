@@ -61,7 +61,7 @@ export const AdminDashboardView: React.FC = () => {
         <div>
           <div className="flex items-center space-x-2 text-amber-400 text-xs font-bold uppercase tracking-wider mb-1">
             <SlidersHorizontal className="w-4 h-4" />
-            <span>KalaSetu Governance & Multi-Vendor Control</span>
+            <span>KaPra Governance & Multi-Vendor Control</span>
           </div>
           <h2 className="font-heritage text-2xl sm:text-3xl font-bold">
             Administrative Console
@@ -197,7 +197,7 @@ export const AdminDashboardView: React.FC = () => {
           </h3>
         </div>
         <p className="text-xs text-stone-600 leading-relaxed">
-          KalaSetu dispatches 85% directly to artisan UPI / Bank accounts. Batch execution ensures zero middleman withholding.
+          KaPra dispatches 85% directly to artisan UPI / Bank accounts. Batch execution ensures zero middleman withholding.
         </p>
         <div className="bg-stone-50 p-4 rounded-xl border border-stone-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 text-xs">
           <div>

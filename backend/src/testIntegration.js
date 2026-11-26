@@ -24,7 +24,7 @@ async function request(path, options = {}) {
 }
 
 async function runTests() {
-  console.log('🧪 Starting KalaSetu Backend Integration Test Suite...\n');
+  console.log('🧪 Starting KaPra Backend Integration Test Suite...\n');
   await new Promise((resolve) => {
     server = app.listen(PORT, HOST, resolve);
   });

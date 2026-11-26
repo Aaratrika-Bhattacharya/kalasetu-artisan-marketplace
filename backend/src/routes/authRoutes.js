@@ -90,10 +90,10 @@ router.post('/artisan-otp-request', async (req, res, next) => {
 
     // Vernacular greeting message for low-literacy artisans
     const messages = {
-      hi: `कला सेतु सत्यापन कोड: ${otp}। यह कोड 10 मिनट के लिए मान्य है। किसी के साथ साझा न करें।`,
-      bn: `কলা সেতু যাচাইকরণ কোড: ${otp}। এই কোডটি ১০ মিনিটের জন্য বৈধ।`,
-      gu: `કલા સેતુ વેરિફિકેશન કોડ: ${otp}। આ કોડ ૧૦ મિનિટ માટે માન્ય છે.`,
-      en: `KalaSetu Artisan Verification Code: ${otp}. Valid for 10 minutes.`,
+      hi: `KaPra सत्यापन कोड: ${otp}। यह कोड 10 मिनट के लिए मान्य है। किसी के साथ साझा न करें।`,
+      bn: `KaPra যাচাইকরণ কোড: ${otp}। এই কোডটি ১০ মিনিটের জন্য বৈধ।`,
+      gu: `KaPra વેરિફિકેશન કોડ: ${otp}। આ કોડ ૧૦ મિનિટ માટે માન્ય છે.`,
+      en: `KaPra Artisan Verification Code: ${otp}. Valid for 10 minutes.`,
     };
 
     console.log(`[Artisan OTP Dispatched] To: ${phoneNumber} | Code: ${otp} | Lang: ${lang}`);

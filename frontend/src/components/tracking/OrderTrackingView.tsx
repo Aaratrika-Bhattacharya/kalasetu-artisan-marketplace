@@ -169,7 +169,7 @@ export const OrderTrackingView: React.FC<Props> = ({ initialOrderNumber = 'KS-20
             <div>
               <div className="font-bold text-stone-900">Arrived Damaged?</div>
               <div className="text-stone-500 text-[11px]">
-                Under KalaSetu Zero-Breakage Guarantee, we replace it 100% free with zero loss to the artisan.
+                Under KaPra Zero-Breakage Guarantee, we replace it 100% free with zero loss to the artisan.
               </div>
             </div>
             <button

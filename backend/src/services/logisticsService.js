@@ -136,7 +136,7 @@ class LogisticsService {
         status: 'ORDER_VERIFIED',
         title: 'Order Verified & Fair-Share Escrow Locked',
         timestamp: d1,
-        location: 'KalaSetu Central Hub',
+        location: 'KaPra Central Hub',
         notes: 'Artisan lineage notified; 85% payout reserved in escrow.',
       },
       {

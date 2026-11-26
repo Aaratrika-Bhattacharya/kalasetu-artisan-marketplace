@@ -46,7 +46,7 @@ app.use('/api/v1/admin', adminRoutes);
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'HEALTHY',
-    service: 'KalaSetu Indian Artisan Marketplace Backend',
+    service: 'KaPra Indian Artisan Marketplace Backend',
     version: '1.0.0',
     timestamp: new Date().toISOString(),
     environment: config.NODE_ENV,
@@ -83,7 +83,7 @@ if (require.main === module) {
   const PORT = config.PORT;
   app.listen(PORT, () => {
     console.log(`=======================================================`);
-    console.log(`🏺 KalaSetu (कला सेतु) Artisan Marketplace API Online`);
+    console.log(`🏺 KaPra Artisan Marketplace API Online`);
     console.log(`🌐 Server running at: http://localhost:${PORT}`);
     console.log(`📋 Health Check: http://localhost:${PORT}/api/health`);
     console.log(`=======================================================`);

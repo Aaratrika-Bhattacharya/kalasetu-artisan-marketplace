@@ -1,7 +1,7 @@
 {
   "name": "kalasetu-artisan-platform",
   "version": "1.0.0",
-  "description": "KalaSetu (कला सेतु) - Direct-to-Connoisseur E-Commerce & Fair-Trade Platform for Indian Clay & Ceramic Artisans",
+  "description": "KaPra - Direct-to-Connoisseur E-Commerce & Fair-Trade Platform for Indian Clay & Ceramic Artisans",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
